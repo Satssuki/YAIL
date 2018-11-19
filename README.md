@@ -5,5 +5,4 @@ Setup: Open the project properties page (Project | Properties), in the C/C++ fol
 
 Links: \
 https://www.quora.com/How-do-you-implement-convolutional-neural-networks-on-C++-from-scratch \
-https://plantsandbuildings.github.io/machine-learning/misc/math/2018/04/28/a-ground-up-c++-convnet-that-scores-0.973-on-the-kaggle-digit-recognizer-challenge.html \
 https://github.com/tiny-dnn/tiny-dnn 
