@@ -157,11 +157,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Cv2Eigen.cpp" />
+    <ClCompile Include="DataAugmentation.cpp" />
     <ClCompile Include="DataLoader.cpp" />
     <ClCompile Include="Vision.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AllIncludes.h" />
+    <ClInclude Include="Cv2Eigen.h" />
+    <ClInclude Include="DataAugmentation.h" />
     <ClInclude Include="DataLoader.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
