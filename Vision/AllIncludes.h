@@ -17,4 +17,7 @@
 #include <algorithm>    
 #include <array>       
 #include <random>       
-#include <chrono>       
+#include <chrono>    
+
+// our classes
+#include "DataLoader.h"
