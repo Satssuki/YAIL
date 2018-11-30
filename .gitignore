@@ -337,3 +337,5 @@ ASALocalRun/
 # Local History for Visual Studio
 .localhistory/
 *.db
+.vs/Vision/v15/.suo
+.vs/Vision/v15/Browse.VC.db

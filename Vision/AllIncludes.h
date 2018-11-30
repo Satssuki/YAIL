@@ -21,3 +21,5 @@
 
 // our classes
 #include "DataLoader.h"
+#include "DataAugmentation.h"
+#include "Cv2Eigen.h"
