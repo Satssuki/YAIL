@@ -37,8 +37,8 @@ void DataLoader::LoadImages(std::string path, std::vector<cv::Mat>* images)
 	std::vector<cv::String> fn;
 	glob(path, fn, false);
 	size_t count = fn.size();
-	size_t i = 0;
-	for (i; i < count; i++)
+	int total = 0;
+	for (size_t i = 0; i < count; i++)
 	{
 		cv::Mat image = imread(fn[i]);
 
@@ -46,12 +46,13 @@ void DataLoader::LoadImages(std::string path, std::vector<cv::Mat>* images)
 			cv::resize(image, image, Size);
 			image.convertTo(image, CV_32FC3, 1.f / 255); // normalize pixel values between 0 and 1
 
-			images->push_back(image);			
+			images->push_back(image);
+			total++;
 		}
 
 		if (i % 100 == 0) { std::cout << i << "/" << fn.size() << " images loaded" << std::endl; }
 	}
 
-	std::cout << "Finished: " <<  i << "/" << fn.size() << " images loaded" << std::endl;
+	std::cout << "Finished loading " << path << ": " << total << "/" << fn.size() << " images loaded" << std::endl;
 }
 
