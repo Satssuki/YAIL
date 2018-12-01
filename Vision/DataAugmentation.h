@@ -27,7 +27,9 @@ public:
 	cv::Mat GetAugmentedFrame();
 	~DataAugmentation();
 private:
-	// Functions
+	// Useful functions
+	bool inRange(int x, int be, int en);
+	// Types of transformations
 	cv::Mat Scale();
 	cv::Mat Translate();
 	cv::Mat Rotate();
@@ -36,6 +38,7 @@ private:
 	cv::Mat Noise();
 	cv::Mat Lightning();
 	cv::Mat Perspective();
+
 	// General variables
 	cv::Mat _frame, _reshapedFrame;
 	AugmentationType _transformation;
