@@ -1,7 +1,7 @@
 #include "DataAugmentation.h"
 
-DataAugmentation::DataAugmentation() {
+DataAugmentation::DataAugmentation(cv::Mat input) {
+	_frame = input;
 }
 
-DataAugmentation::~DataAugmentation() {
-}
+DataAugmentation::~DataAugmentation() {}
