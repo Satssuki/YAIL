@@ -1,9 +1,17 @@
 #pragma once
+
+enum AugmentationType {
+	SCALING,
+	TRANSLATION,
+	ROTATION,
+	FINER_ROTATION,
+	FLIPPING,
+	PEPPER_AND_SALT,
+	LIGHTNING,
+	PERSPECTIVE,
+};
 class DataAugmentation
 {
-	enum Augmentation {
-
-};
 
 public:
 	DataAugmentation();
