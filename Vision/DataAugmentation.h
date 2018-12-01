@@ -2,6 +2,11 @@
 
 #include "AllIncludes.h"
 
+/*	
+	Documentation
+		- https://github.com/karanshgl/image-operations/blob/master/main.cpp#L264
+*/
+
 enum AugmentationType {
 	NONE,
 	SCALING,
