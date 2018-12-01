@@ -1,15 +1,5 @@
 #include "DataAugmentation.h"
 
-/*NONE,
-	SCALING,
-	TRANSLATION,
-	ROTATION,
-	FINER_ROTATION,
-	FLIPPING,
-	PEPPER_AND_SALT,
-	LIGHTNING,
-	PERSPECTIVE,*/
-
 DataAugmentation::DataAugmentation(cv::Mat input) {
 	_frame = input;
 	_transformation = (AugmentationType)(rand() % PERSPECTIVE);
