@@ -160,6 +160,7 @@
     <ClCompile Include="Cv2Eigen.cpp" />
     <ClCompile Include="DataAugmentation.cpp" />
     <ClCompile Include="DataLoader.cpp" />
+    <ClCompile Include="GuessTest.cpp" />
     <ClCompile Include="Vision.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -167,6 +168,7 @@
     <ClInclude Include="Cv2Eigen.h" />
     <ClInclude Include="DataAugmentation.h" />
     <ClInclude Include="DataLoader.h" />
+    <ClInclude Include="GuessTest.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
