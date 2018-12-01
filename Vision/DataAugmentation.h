@@ -18,8 +18,10 @@ class DataAugmentation
 
 public:
 	DataAugmentation(cv::Mat input);
+	cv::Mat GetAugmentedFrame();
 	~DataAugmentation();
 private:
+	// Functions
 	cv::Mat Scale();
 	cv::Mat Translate();
 	cv::Mat Rotate();
@@ -28,7 +30,8 @@ private:
 	cv::Mat Noise();
 	cv::Mat Lightning();
 	cv::Mat Perspective();
-	cv::Mat _frame;
+	// General variables
+	cv::Mat _frame, _reshapedFrame;
 	AugmentationType _transformation;
 };
 
