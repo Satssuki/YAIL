@@ -3,7 +3,6 @@
 DataAugmentation::DataAugmentation(cv::Mat input) {
 	_frame = input;
 	_transformation = (AugmentationType)(rand() % PERSPECTIVE);
-	int x;
 }
 
 cv::Mat DataAugmentation::GetAugmentedFrame()
