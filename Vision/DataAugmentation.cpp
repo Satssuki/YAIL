@@ -33,7 +33,7 @@ DataAugmentation::~DataAugmentation() {}
 
 cv::Mat DataAugmentation::Scale()
 {
-	return cv::Mat();
+
 }
 
 cv::Mat DataAugmentation::Translate()

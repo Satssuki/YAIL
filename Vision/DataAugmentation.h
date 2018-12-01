@@ -13,6 +13,12 @@ enum AugmentationType {
 	LIGHTNING,
 	PERSPECTIVE,
 };
+
+enum Interpolation {
+	nearest,
+	bilinear,
+};
+
 class DataAugmentation
 {
 
