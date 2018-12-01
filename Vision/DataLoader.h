@@ -14,6 +14,6 @@ private:
 	void LoadImages(std::string path, std::vector<cv::Mat>* images);
 
 	unsigned Seed;
-	cv::Size Size = cv::Size(64, 64);	
+	cv::Size Size = cv::Size(64, 64);
 };
 
