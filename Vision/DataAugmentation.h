@@ -3,6 +3,7 @@
 #include "AllIncludes.h"
 
 enum AugmentationType {
+	NONE,
 	SCALING,
 	TRANSLATION,
 	ROTATION,
