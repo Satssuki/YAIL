@@ -1,5 +1,12 @@
 #pragma once
-#include "AllIncludes.h"
+
+#ifndef LAYER_H
+#define LAYER_H
+
+#include <iostream>
+#include <string>
+
+#include "Activation.h"
 
 class Layer
 {
@@ -10,3 +17,4 @@ public:
 	~Layer();
 };
 
+#endif 

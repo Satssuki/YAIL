@@ -1,6 +1,5 @@
 #include "Layer.h"
-
-
+#include <iostream>
 
 Layer::Layer()
 {

@@ -23,18 +23,9 @@
 // our classes
 
 #include "GuessTest.h"
-#include "Network.h"
 
 // data
 #include "DataLoader.h"
 #include "DataAugmentation.h"
 
-// layer
-#include "Layer.h"
-#include "Dense.h"
-
-
-// enum
-#include "Loss.h"
-#include "Optimizer.h"
-#include "Activation.h"
+#include "Network.h"

@@ -6,7 +6,7 @@ Network::Network()
 {
 }
 
-Network::Network(std::vector<Layer*> layers)
+Network::Network(std::vector<Layer> layers)
 {
 }
 
@@ -15,7 +15,7 @@ Network::~Network()
 {
 }
 
-void Network::Add(Layer* layer)
+void Network::Add(Layer layer)
 {
 }
 

@@ -157,18 +157,25 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Cv2Eigen.cpp" />
     <ClCompile Include="DataAugmentation.cpp" />
     <ClCompile Include="DataLoader.cpp" />
+    <ClCompile Include="Dense.cpp" />
     <ClCompile Include="GuessTest.cpp" />
+    <ClCompile Include="Layer.cpp" />
+    <ClCompile Include="Network.cpp" />
     <ClCompile Include="Vision.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Activation.h" />
     <ClInclude Include="AllIncludes.h" />
-    <ClInclude Include="Cv2Eigen.h" />
     <ClInclude Include="DataAugmentation.h" />
     <ClInclude Include="DataLoader.h" />
+    <ClInclude Include="Dense.h" />
     <ClInclude Include="GuessTest.h" />
+    <ClInclude Include="Layer.h" />
+    <ClInclude Include="Loss.h" />
+    <ClInclude Include="Network.h" />
+    <ClInclude Include="Optimizer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
