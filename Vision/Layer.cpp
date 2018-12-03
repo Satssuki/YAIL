@@ -6,6 +6,10 @@ Layer::Layer()
 {
 }
 
+Layer::Layer(int neurons, std::string activation)
+{
+}
+
 
 Layer::~Layer()
 {

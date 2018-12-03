@@ -5,7 +5,7 @@ class Layer
 {
 public:
 	Layer();
-	Layer(int totalNeurons, std::string activationFunc);
+	Layer(int neurons, std::string activation);
 	~Layer();
 };
 

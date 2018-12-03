@@ -26,4 +26,5 @@
 #include "Cv2Eigen.h"
 #include "GuessTest.h"
 #include "Layer.h"
+#include "Dense.h"
 #include "Network.h"
