@@ -67,6 +67,8 @@ void Network::Plot()
 
 void Network::NormalInitialization()
 {
+	std::cout << "Initialize weights and biases" << std::endl;
+
 	std::default_random_engine generator;
 	std::normal_distribution<float> distribution(0.0, 1.0);
 	auto normal = [&](float) {return distribution(generator); };
@@ -81,4 +83,6 @@ void Network::NormalInitialization()
 			Weights[i - 1].push_back(Eigen::VectorXf::NullaryExpr(Layers[i - 1].Size(), normal));
 		}	
 	}
+
+	std::cout << "Initialization finished" << std::endl;
 }
