@@ -23,6 +23,10 @@ void Network::Compile(std::string optimizer, std::string loss)
 {
 }
 
+void Network::Compile(Optimizer optimizer, Loss loss)
+{
+}
+
 void Network::Fit(std::tuple<std::vector<cv::Mat>, std::vector<int>> train, std::tuple<std::vector<cv::Mat>, std::vector<int>> test)
 {
 }

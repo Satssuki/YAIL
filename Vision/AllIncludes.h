@@ -21,10 +21,20 @@
 #include <string>
 
 // our classes
+
+#include "GuessTest.h"
+#include "Network.h"
+
+// data
 #include "DataLoader.h"
 #include "DataAugmentation.h"
-#include "Cv2Eigen.h"
-#include "GuessTest.h"
+
+// layer
 #include "Layer.h"
 #include "Dense.h"
-#include "Network.h"
+
+
+// enum
+#include "Loss.h"
+#include "Optimizer.h"
+#include "Activation.h"

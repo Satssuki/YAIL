@@ -9,7 +9,8 @@ public:
 	~Network();
 
 	void Add(Layer* layer);
-	void Compile(std::string optimizer = "sgd", std::string loss = "mae");
+	void Compile(std::string optimizer = "sgd", std::string loss = "mse");
+	void Compile(Optimizer optimizer = stochastic_gradient_descent, Loss loss = mean_squared_error);
 	void Fit(std::tuple < std::vector<cv::Mat>, std::vector<int>> train, std::tuple < std::vector<cv::Mat>, std::vector<int>> test);
 	void Hyperparameter(int epoch, int batchSize, float learningRate);
 	void SaveWeights(std::string filename);
