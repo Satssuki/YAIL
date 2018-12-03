@@ -7,6 +7,10 @@ The goal is to provide all beginners (like us) with the resources to build their
 3B1B neural networks series: https://www.youtube.com/playlist?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi \ 
 Michael Nielsen's book (best explanations found): http://neuralnetworksanddeeplearning.com/
 
+If you are not familiar with multivariable calculus check some videos from one of these series:
+https://www.youtube.com/playlist?list=PLSQl0a2vh4HC5feHa6Rc5c0wbRTx56nF7 \
+https://www.youtube.com/playlist?list=PL4C4C8A7D06566F38
+
 # Links (not used but seem really good)
 Tips: https://www.quora.com/How-do-you-implement-convolutional-neural-networks-on-C++-from-scratch \
 Standford Lectures: https://www.youtube.com/playlist?list=PL3FW7Lu3i5JvHM8ljYj-zLfQRF3EO8sYv \ 
