@@ -63,6 +63,9 @@
     <ClCompile Include="GuessTest.cpp">
       <Filter>Fichiers sources\Test</Filter>
     </ClCompile>
+    <ClCompile Include="Input.cpp">
+      <Filter>Fichiers sources\Network\Layers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AllIncludes.h">
@@ -94,6 +97,9 @@
     </ClInclude>
     <ClInclude Include="Activation.h">
       <Filter>Fichiers d%27en-tête\Enum</Filter>
+    </ClInclude>
+    <ClInclude Include="Input.h">
+      <Filter>Fichiers d%27en-tête\Network\Layers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

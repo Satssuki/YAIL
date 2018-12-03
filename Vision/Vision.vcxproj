@@ -161,6 +161,7 @@
     <ClCompile Include="DataLoader.cpp" />
     <ClCompile Include="Dense.cpp" />
     <ClCompile Include="GuessTest.cpp" />
+    <ClCompile Include="Input.cpp" />
     <ClCompile Include="Layer.cpp" />
     <ClCompile Include="Network.cpp" />
     <ClCompile Include="Vision.cpp" />
@@ -172,6 +173,7 @@
     <ClInclude Include="DataLoader.h" />
     <ClInclude Include="Dense.h" />
     <ClInclude Include="GuessTest.h" />
+    <ClInclude Include="Input.h" />
     <ClInclude Include="Layer.h" />
     <ClInclude Include="Loss.h" />
     <ClInclude Include="Network.h" />
