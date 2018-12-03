@@ -18,9 +18,12 @@
 #include <array>       
 #include <random>       
 #include <chrono>    
+#include <string>
 
 // our classes
 #include "DataLoader.h"
 #include "DataAugmentation.h"
 #include "Cv2Eigen.h"
 #include "GuessTest.h"
+#include "Layer.h"
+#include "Network.h"
