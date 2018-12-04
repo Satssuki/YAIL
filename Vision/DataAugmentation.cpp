@@ -128,13 +128,7 @@ void DataAugmentation::Noise(cv::Mat &input)
 
 void DataAugmentation::Lightning(cv::Mat &input)
 {
-	for (int rows = 0; rows < input.rows; rows++) {
-		for (int cols = 0; cols < input.cols; cols++) {
-			input.at<cv::Vec3b>(rows, cols)[0] = input.at<cv::Vec3b>(rows, cols)[0] + 80;
-			input.at<cv::Vec3b>(rows, cols)[1] = input.at<cv::Vec3b>(rows, cols)[1];
-			input.at<cv::Vec3b>(rows, cols)[2] = input.at<cv::Vec3b>(rows, cols)[2];
-		}
-	}
+	input.convertTo(input, -1, 2.2, 50);
 }
 
 void DataAugmentation::Perspective(cv::Mat &input)

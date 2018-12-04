@@ -41,6 +41,7 @@ private:
 	static void Perspective(cv::Mat &input);
 
 	// General variables
+	cv::Mat _frame, _reshapedFrame;
 	AugmentationType _transformation;
 };
 
