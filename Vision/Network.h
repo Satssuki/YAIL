@@ -25,12 +25,14 @@ public:
 	void Train();
 	std::vector<float> Predict(cv::Mat image);
 	void Summary();
-	void Plot();	
+	void Plot();
 
 private:
 	void NormalInitialization();
 	int Evaluate();
 	void UpdateBatch(std::tuple < std::vector<cv::Mat>, std::vector<int>> batch);
+	std::tuple < std::vector < Eigen::MatrixXf>, std::vector<Eigen::VectorXf> > BackPropagation(Eigen::VectorXf image, int label);
+
 	Eigen::VectorXf Forward(Eigen::VectorXf input);
 
 	std::vector<Layer*> Layers;

@@ -138,16 +138,68 @@ int Network::Evaluate()
 
 void Network::UpdateBatch(std::tuple<std::vector<cv::Mat>, std::vector<int>> batch)
 {
+	std::vector<Eigen::MatrixXf> sumWeightsError;
+	std::vector<Eigen::VectorXf> sumBiasesError;
+	for (int i = 0; i < Layers.size() - 1; i++)
+	{
+		//sumWeightsError.push_back(Eigen::MatrixXf(Weights[i].rows, Weights[i].cols)); error not standart syntax?
+		//sumBiasesError.push_back(Eigen::VectorXf(Biases[i].rows));	
 
+		sumWeightsError.push_back(Eigen::MatrixXf());
+		sumBiasesError.push_back(Eigen::VectorXf());
+	}
+
+	for (int i = 0; i < BatchSize; i++)
+	{
+		cv::Mat imageCV = std::get<0>(batch)[i];
+		// Todo convert mat to eigen vec
+		Eigen::VectorXf image;
+		int label = std::get<1>(batch)[i];
+
+		auto errorWeightsBiases = BackPropagation(image, label);
+
+		for (int iL = 0; iL < Layers.size() - 1; iL++)
+		{
+			sumWeightsError[iL] += std::get<0>(errorWeightsBiases)[iL];
+			sumBiasesError[iL] += std::get<1>(errorWeightsBiases)[iL];
+		}	
+	}
+	
+	for (int i = 0; i < Layers.size() - 1; i++)
+	{
+		Weights[i] = Weights[i] - LearningRate / (float)BatchSize * sumWeightsError[i];
+		Biases[i] = Biases[i] - LearningRate / (float)BatchSize * sumBiasesError[i];
+	}
+}
+
+std::tuple<std::vector<Eigen::MatrixXf>, std::vector<Eigen::VectorXf>> Network::BackPropagation(Eigen::VectorXf image, int label)
+{
+	std::vector< Eigen::VectorXf> activations;
+	std::vector< Eigen::VectorXf> beforeActivations;
+	Eigen::VectorXf a = image;
+	for (int i = 0; i < Layers.size(); i++)
+	{
+		Eigen::VectorXf z = Weights[i] * a + Biases[i];
+		a = Function::ActivationFunction(Layers[i + 1]->_Activation, z);
+
+		beforeActivations.push_back(z);
+		activations.push_back(a);
+	}
+
+	Eigen::VectorXf lastLayerError = Function::ErrorFunction(_Loss, activations[activations.size()- 1]);
+
+	// Todo propagate error backward
+
+	return std::tuple<std::vector<Eigen::MatrixXf>, std::vector<Eigen::VectorXf>>();
 }
 
 Eigen::VectorXf Network::Forward(Eigen::VectorXf input)
 {	
 	Eigen::VectorXf a = input;
-	for (int iLayers = 0; iLayers < Layers.size(); iLayers++) 
+	for (int iL = 0; iL < Layers.size(); iL++) 
 	{
-		Eigen::VectorXf z = Weights[iLayers] * a + Biases[iLayers];
-		a = Function::ActivationFunc(Activation::sigmoid, z);
+		Eigen::VectorXf z = Weights[iL] * a + Biases[iL];
+		a = Function::ActivationFunction(Layers[iL + 1]->_Activation, z);
 	}
 
 	return a;
