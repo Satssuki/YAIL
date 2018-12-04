@@ -9,7 +9,7 @@
 
 enum AugmentationType {
 	NONE,
-	SCALING,
+	DISTORTION,
 	TRANSLATION,
 	ROTATION,
 	FINER_ROTATION,
@@ -35,7 +35,7 @@ private:
 	// Useful functions
 	bool inRange(int x, int be, int en);
 	// Types of transformations
-	cv::Mat Scale();
+	cv::Mat Distortion();
 	cv::Mat Translate();
 	cv::Mat Rotate();
 	cv::Mat Fine_Rotate();

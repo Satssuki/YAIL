@@ -10,6 +10,8 @@ cv::Mat DataAugmentation::GetAugmentedFrame()
 	switch (_transformation) {
 	case (NONE):
 		return _frame;
+	case (DISTORTION):
+		return this->Distortion();
 	case (TRANSLATION):
 		return this->Translate();
 	case (ROTATION):
@@ -25,7 +27,7 @@ cv::Mat DataAugmentation::GetAugmentedFrame()
 	case (PERSPECTIVE):
 		return this->Perspective();
 	default:
-		return this->Scale();
+		return this->Distortion();
 	}
 }
 
@@ -37,38 +39,61 @@ bool DataAugmentation::inRange(int x, int be, int en)
 	return (be <= x && x < en);
 }
 
-cv::Mat DataAugmentation::Scale()
+cv::Mat DataAugmentation::Distortion()
 {
-	int scale = rand() % 3;
+	_reshapedFrame = _frame.clone();
+	double sigma = 4.0;
+	double alpha = 100;
+	bool bNorm = false; _reshapedFrame.clone();
 
-	int nRows = _frame.rows;
-	int nCols = _frame.cols;
-	int channels = _frame.channels();
 
-	int newRow = floor(1 * nRows);
-	int newCol = floor(1 * nCols);
+	cv::Mat dx(_frame.size(), CV_64FC1);
+	cv::Mat dy(_frame.size(), CV_64FC1);
 
-	_reshapedFrame = cv::Mat(newRow, newCol, CV_8UC3);
+	double low = -1.0;
+	double high = 1.0;
 
-	double sr = (nRows - 1)*1.0 / (newRow - 1);
-	double sc = (nCols - 1)*1.0 / (newCol - 1);
+	//The image deformations were created by first generating
+	//random displacement fields, that's dx(x,y) = rand(-1, +1) and dy(x,y) = rand(-1, +1)
+	cv::randu(dx, cv::Scalar(low), cv::Scalar(high));
+	cv::randu(dy, cv::Scalar(low), cv::Scalar(high));
 
-	cv::Vec3b *p, *q;
+	//The fields dx and dy are then convolved with a Gaussian of standard deviation sigma(in pixels)
+	cv::Size kernel_size(sigma * 6 + 1, sigma * 6 + 1);
+	cv::GaussianBlur(dx, dx, kernel_size, sigma);
+	cv::GaussianBlur(dy, dy, kernel_size, sigma);
 
-	for (int i = 0; i < newRow; i++) {
-		p = _frame.ptr<cv::Vec3b>(i);
-		q = _reshapedFrame.ptr<cv::Vec3b>(i);
-		for (int j = 0; j < newCol; j++) {
-			for (int k = 0; k < channels; k++) {
-				int x = round(i / scale);
-				int y = round(i / scale);
-				
-				if (inRange(x, 0, nRows) && inRange(y, 0, nCols)) {
-					q[j][k] = _frame.at<cv::Vec3b>(x, y).val[k];
+	//If we normalize the displacement field (to a norm of 1,
+	//the field is then close to constant, with a random direction
+	if (bNorm)
+	{
+		dx /= cv::norm(dx, cv::NORM_L1);
+		dy /= cv::norm(dy, cv::NORM_L1);
+	}
+
+	//The displacement fields are then multiplied by a scaling factor alpha
+	//that controls the intensity of the deformation.
+	dx *= alpha;
+	dy *= alpha;
+
+	//Inverse(or Backward) Mapping to avoid gaps and overlaps.
+	cv::Rect checkError(0, 0, _frame.cols, _frame.rows);
+	int nCh = _frame.channels();
+
+	for (int displaced_y = 0; displaced_y < _frame.rows; displaced_y++)
+		for (int displaced_x = 0; displaced_x < _frame.cols; displaced_x++)
+		{
+			int org_x = displaced_x - dx.at<double>(displaced_y, displaced_x);
+			int org_y = displaced_y - dy.at<double>(displaced_y, displaced_x);
+
+			if (checkError.contains(cv::Point(org_x, org_y)))
+			{
+				for (int ch = 0; ch < nCh; ch++)
+				{
+					_reshapedFrame.data[(displaced_y * _frame.cols + displaced_x) * nCh + ch] = _frame.data[(org_y * _frame.cols + org_x) * nCh + ch];
 				}
 			}
 		}
-	}
 	return _reshapedFrame;
 }
 #pragma endregion
