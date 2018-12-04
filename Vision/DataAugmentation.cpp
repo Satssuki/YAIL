@@ -1,48 +1,48 @@
 #include "DataAugmentation.h"
 
-DataAugmentation::DataAugmentation(cv::Mat input) {
-	_frame = input;
-	_transformation = (AugmentationType)(rand() % PERSPECTIVE);
-}
-
-cv::Mat DataAugmentation::GetAugmentedFrame()
+cv::Mat DataAugmentation::GetAugmentedFrame(cv::Mat &input)
 {
+	AugmentationType _transformation = (AugmentationType)(rand() % PERSPECTIVE);
 	switch (_transformation) {
-	/*case (NONE):
-		return _frame;
 	case (DISTORTION):
-		return this->Distortion();
+		Distortion(input);
+		break;
 	case (TRANSLATION):
-		return this->Translate();
+		Translate(input);
+		break;
 	case (ROTATION):
-		return this->Rotate();
+		Rotate(input);
+		break;
 	case (FLIPPING):
-		return this->Flip();
+		Flip(input);
+		break;
 	case (PEPPER_AND_SALT):
-		return this->SaltNPepper();
+		SaltNPepper(input);
+		break;
 	case (NOISE):
-		return this->Noise();
+		Noise(input);
+		break;
 	case (LIGHTNING):
-		return this->Lightning();
+		Lightning(input);
+		break;
 	case (PERSPECTIVE):
-		return this->Perspective();*/
+		Perspective(input);
+		break;
 	default:
-		return SaltNPepper();
+		return input;
 	}
-}
+	return input;
+} 
 
-DataAugmentation::~DataAugmentation() {}
-
-cv::Mat DataAugmentation::Distortion()
+void DataAugmentation::Distortion(cv::Mat &input)
 {
-	_reshapedFrame = _frame.clone();
-	double sigma = 4.0;
-	double alpha = 50;
-	bool bNorm = false; _reshapedFrame.clone();
+	double sigma = 0.75;
+	double alpha = 0.25;
+	bool bNorm = false;
 
 
-	cv::Mat dx(_frame.size(), CV_64FC1);
-	cv::Mat dy(_frame.size(), CV_64FC1);
+	cv::Mat dx(input.size(), CV_64FC1);
+	cv::Mat dy(input.size(), CV_64FC1);
 
 	double low = -1.0;
 	double high = 1.0;
@@ -71,11 +71,11 @@ cv::Mat DataAugmentation::Distortion()
 	dy *= alpha;
 
 	//Inverse(or Backward) Mapping to avoid gaps and overlaps.
-	cv::Rect checkError(0, 0, _frame.cols, _frame.rows);
-	int nCh = _frame.channels();
+	cv::Rect checkError(0, 0, input.cols, input.rows);
+	int nCh = input.channels();
 
-	for (int displaced_y = 0; displaced_y < _frame.rows; displaced_y++)
-		for (int displaced_x = 0; displaced_x < _frame.cols; displaced_x++)
+	for (int displaced_y = 0; displaced_y < input.rows; displaced_y++)
+		for (int displaced_x = 0; displaced_x < input.cols; displaced_x++)
 		{
 			int org_x = displaced_x - dx.at<double>(displaced_y, displaced_x);
 			int org_y = displaced_y - dy.at<double>(displaced_y, displaced_x);
@@ -84,72 +84,61 @@ cv::Mat DataAugmentation::Distortion()
 			{
 				for (int ch = 0; ch < nCh; ch++)
 				{
-					_reshapedFrame.data[(displaced_y * _frame.cols + displaced_x) * nCh + ch] = _frame.data[(org_y * _frame.cols + org_x) * nCh + ch];
+					input.data[(displaced_y * input.cols + displaced_x) * nCh + ch] = input.data[(org_y * input.cols + org_x) * nCh + ch];
 				}
 			}
 		}
-	return _reshapedFrame;
 }
 
-cv::Mat DataAugmentation::Translate()
+void DataAugmentation::Translate(cv::Mat &input)
 {
-	float offsetX = rand() % 240 - 120;
-	float offsetY = rand() % 240 - 120;
+	float offsetX = rand() % 160 - 80;
+	float offsetY = rand() % 160 - 80;
 	cv::Mat trans_mat = (cv::Mat_<double>(2, 3) << 1, 0, offsetX, 0, 1, offsetY);
-	cv::warpAffine(_frame, _reshapedFrame, trans_mat, _frame.size());
-	return _reshapedFrame;
+	cv::warpAffine(input, input, trans_mat, input.size());
 }
 
-cv::Mat DataAugmentation::Rotate()
+void DataAugmentation::Rotate(cv::Mat &input)
 {
-	cv:: Point2f src_center(_frame.cols / 2.0F, _frame.rows / 2.0F);
+    cv:: Point2f src_center(input.cols / 2.0F, input.rows / 2.0F);
 	cv::Mat rot_mat = getRotationMatrix2D(src_center, rand() % 180, 1.0);
-	cv::warpAffine(_frame, _reshapedFrame, rot_mat, _frame.size());
-	return _reshapedFrame;
+	cv::warpAffine(input, input, rot_mat, input.size());
 }
 
-cv::Mat DataAugmentation::Flip()
+void DataAugmentation::Flip(cv::Mat &input)
 {
-	cv::flip(_frame, _reshapedFrame, 1);
-	return _reshapedFrame;
+	cv::flip(input, input, 1);
 }
 
-cv::Mat DataAugmentation::SaltNPepper()
+void DataAugmentation::SaltNPepper(cv::Mat &input)
 {
-	cv::Mat saltPepperNoise = cv::Mat::zeros(_frame.rows, _frame.cols, CV_8U);
+	cv::Mat saltPepperNoise = cv::Mat::zeros(input.rows, input.cols, CV_8U);
 	cv::randu(saltPepperNoise, 0, 255);
 
 	cv::Mat black = saltPepperNoise < 15;
 	cv::Mat white = saltPepperNoise > 245;
 
-	_reshapedFrame = _frame.clone();
-	_reshapedFrame.setTo(255, white);
-	_reshapedFrame.setTo(0, black);
-
-	return _reshapedFrame;
+	input.setTo(255, white);
+	input.setTo(0, black);
 }
 
-cv::Mat DataAugmentation::Noise()
+void DataAugmentation::Noise(cv::Mat &input)
 {
-	_reshapedFrame = _frame.clone();
-	cv::blur(_frame, _reshapedFrame, cv::Size(20, 20));
-	return _reshapedFrame;
+	cv::blur(input, input, cv::Size(20, 20));
 }
 
-cv::Mat DataAugmentation::Lightning()
+void DataAugmentation::Lightning(cv::Mat &input)
 {
-	_reshapedFrame = _frame.clone();
-	for (int rows = 0; rows < _frame.rows; rows++) {
-		for (int cols = 0; cols < _frame.cols; cols++) {
-			_reshapedFrame.at<cv::Vec3b>(rows, cols)[0] = _frame.at<cv::Vec3b>(rows, cols)[0] + 80;
-			_reshapedFrame.at<cv::Vec3b>(rows, cols)[1] = _frame.at<cv::Vec3b>(rows, cols)[1];
-			_reshapedFrame.at<cv::Vec3b>(rows, cols)[2] = _frame.at<cv::Vec3b>(rows, cols)[2];
+	for (int rows = 0; rows < input.rows; rows++) {
+		for (int cols = 0; cols < input.cols; cols++) {
+			input.at<cv::Vec3b>(rows, cols)[0] = input.at<cv::Vec3b>(rows, cols)[0] + 80;
+			input.at<cv::Vec3b>(rows, cols)[1] = input.at<cv::Vec3b>(rows, cols)[1];
+			input.at<cv::Vec3b>(rows, cols)[2] = input.at<cv::Vec3b>(rows, cols)[2];
 		}
 	}
-	return _reshapedFrame;
 }
 
-cv::Mat DataAugmentation::Perspective()
+void DataAugmentation::Perspective(cv::Mat &input)
 {
 	// Input Quadilateral or Image plane coordinates
 	cv::Point2f inputQuad[4];
@@ -158,11 +147,7 @@ cv::Mat DataAugmentation::Perspective()
 
 	// Lambda Matrix
 	cv::Mat lambda(2, 4, CV_32FC1);
-	//Input and Output Image;
-	cv::Mat input;
 
-	//Load the image
-	input = _frame;
 	// Set the lambda matrix the same type and size as input
 	lambda = cv::Mat::zeros(input.rows, input.cols, input.type());
 
@@ -181,7 +166,5 @@ cv::Mat DataAugmentation::Perspective()
 	// Get the Perspective Transform Matrix i.e. lambda 
 	lambda = getPerspectiveTransform(inputQuad, outputQuad);
 	// Apply the Perspective Transform just found to the src image
-	warpPerspective(input, _reshapedFrame, lambda, _reshapedFrame.size());
-
-	return _reshapedFrame;
+	warpPerspective(input, input, lambda, input.size());
 }

@@ -8,7 +8,6 @@
 */
 
 enum AugmentationType {
-	NONE,
 	DISTORTION,
 	TRANSLATION,
 	ROTATION,
@@ -28,19 +27,18 @@ class DataAugmentation
 {
 
 public:
-	DataAugmentation(cv::Mat input);
-	cv::Mat GetAugmentedFrame();
+	static cv::Mat GetAugmentedFrame(cv::Mat &input);
 	~DataAugmentation();
 private:
 	// Types of transformations
-	cv::Mat Distortion();
-	cv::Mat Translate();
-	cv::Mat Rotate();
-	cv::Mat Flip();
-	cv::Mat SaltNPepper();
-	cv::Mat Noise();
-	cv::Mat Lightning();
-	cv::Mat Perspective();
+	static void Distortion(cv::Mat &input);
+	static void Translate(cv::Mat &input);
+	static void Rotate(cv::Mat &input);
+	static void Flip(cv::Mat &input);
+	static void SaltNPepper(cv::Mat &input);
+	static void Noise(cv::Mat &input);
+	static void Lightning(cv::Mat &input);
+	static void Perspective(cv::Mat &input);
 
 	// General variables
 	cv::Mat _frame, _reshapedFrame;
