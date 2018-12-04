@@ -19,6 +19,7 @@
 #include <random>       
 #include <chrono>    
 #include <string>
+#include <time.h>
 
 // our classes
 

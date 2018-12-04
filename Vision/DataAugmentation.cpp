@@ -27,7 +27,7 @@ cv::Mat DataAugmentation::GetAugmentedFrame()
 	case (PERSPECTIVE):
 		return this->Perspective();*/
 	default:
-		return this->Translate();
+		return this->Rotate();
 	}
 }
 
@@ -94,14 +94,18 @@ cv::Mat DataAugmentation::Distortion()
 cv::Mat DataAugmentation::Translate()
 {
 	float offsetX = rand() % 250;
-	cv::Mat trans_mat = (cv::Mat_<double>(2, 3) << 1, 0, 120, 0, 1, -100);
+	float offsetY = rand() % 250;
+	cv::Mat trans_mat = (cv::Mat_<double>(2, 3) << 1, 0, offsetX, 0, 1, -offsetY);
 	cv::warpAffine(_frame, _reshapedFrame, trans_mat, _frame.size());
 	return _reshapedFrame;
 }
 
 cv::Mat DataAugmentation::Rotate()
 {
-	return cv::Mat();
+	cv:: Point2f src_center(_frame.cols / 2.0F, _frame.rows / 2.0F);
+	cv::Mat rot_mat = getRotationMatrix2D(src_center, rand() % 180, 1.0);
+	cv::warpAffine(_frame, _reshapedFrame, rot_mat, _frame.size());
+	return _reshapedFrame;
 }
 
 cv::Mat DataAugmentation::Fine_Rotate()
