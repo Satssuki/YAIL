@@ -17,7 +17,8 @@ Eigen::VectorXf Function::ActivationFunc(Activation activationFunc, Eigen::Vecto
 
 Eigen::VectorXf Function::Sigmoid(Eigen::VectorXf  src)
 {
-	return 1.0 / (1.0 + src.exp() * -1);
+	return Eigen::VectorXf();
+	//return 1.0 / (1.0 + src.exp() * -1);
 }
 
 

@@ -29,7 +29,7 @@ public:
 
 private:
 	void NormalInitialization();
-	float Evaluate();
+	int Evaluate();
 	void UpdateBatch(std::tuple < std::vector<cv::Mat>, std::vector<int>> batch);
 	Eigen::VectorXf Forward(Eigen::VectorXf input);
 
@@ -40,6 +40,8 @@ private:
 	std::tuple<std::vector<cv::Mat>, std::vector<int>> TrainData;
 	std::tuple<std::vector<cv::Mat>, std::vector<int>> TestData;
 
+	Optimizer _Optimizer;
+	Loss _Loss;
 	int Epoch;
 	int BatchSize;
 	float LearningRate;
