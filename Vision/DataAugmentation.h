@@ -28,8 +28,8 @@ class DataAugmentation
 
 public:
 	static cv::Mat GetAugmentedFrame(cv::Mat &input);
-	~DataAugmentation();
 private:
+
 	// Types of transformations
 	static void Distortion(cv::Mat &input);
 	static void Translate(cv::Mat &input);
@@ -41,7 +41,6 @@ private:
 	static void Perspective(cv::Mat &input);
 
 	// General variables
-	cv::Mat _frame, _reshapedFrame;
 	AugmentationType _transformation;
 };
 

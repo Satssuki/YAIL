@@ -40,7 +40,6 @@ void DataAugmentation::Distortion(cv::Mat &input)
 	double alpha = 0.25;
 	bool bNorm = false;
 
-
 	cv::Mat dx(input.size(), CV_64FC1);
 	cv::Mat dy(input.size(), CV_64FC1);
 
@@ -59,8 +58,7 @@ void DataAugmentation::Distortion(cv::Mat &input)
 
 	//If we normalize the displacement field (to a norm of 1,
 	//the field is then close to constant, with a random direction
-	if (bNorm)
-	{
+	if (bNorm) {
 		dx /= cv::norm(dx, cv::NORM_L1);
 		dy /= cv::norm(dy, cv::NORM_L1);
 	}
@@ -74,7 +72,7 @@ void DataAugmentation::Distortion(cv::Mat &input)
 	cv::Rect checkError(0, 0, input.cols, input.rows);
 	int nCh = input.channels();
 
-	for (int displaced_y = 0; displaced_y < input.rows; displaced_y++)
+	for (int displaced_y = 0; displaced_y < input.rows; displaced_y++) {
 		for (int displaced_x = 0; displaced_x < input.cols; displaced_x++)
 		{
 			int org_x = displaced_x - dx.at<double>(displaced_y, displaced_x);
@@ -88,6 +86,7 @@ void DataAugmentation::Distortion(cv::Mat &input)
 				}
 			}
 		}
+	}
 }
 
 void DataAugmentation::Translate(cv::Mat &input)
@@ -124,7 +123,7 @@ void DataAugmentation::SaltNPepper(cv::Mat &input)
 
 void DataAugmentation::Noise(cv::Mat &input)
 {
-	cv::blur(input, input, cv::Size(20, 20));
+	cv::blur(input, input, cv::Size(10, 10));
 }
 
 void DataAugmentation::Lightning(cv::Mat &input)
