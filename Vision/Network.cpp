@@ -33,10 +33,15 @@ void Network::Compile(Optimizer optimizer, Loss loss)
 
 void Network::Fit(std::tuple<std::vector<cv::Mat>, std::vector<int>> train, std::tuple<std::vector<cv::Mat>, std::vector<int>> test)
 {
+	TrainData = train;
+	TestData = test;
 }
 
 void Network::Hyperparameter(int epoch, int batchSize, float learningRate)
 {
+	Epoch = epoch;
+	BatchSize = batchSize;
+	LearningRate = learningRate;
 }
 
 void Network::SaveWeights(std::string filename)

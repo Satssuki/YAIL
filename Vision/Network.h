@@ -34,5 +34,12 @@ private:
 	std::vector<Layer> Layers;
 	std::vector<Eigen::VectorXf> Biases;
 	std::vector< std::vector<Eigen::VectorXf>> Weights;
+
+	std::tuple<std::vector<cv::Mat>, std::vector<int>> TrainData;
+	std::tuple<std::vector<cv::Mat>, std::vector<int>> TestData;
+
+	int Epoch;
+	int BatchSize;
+	float LearningRate;
 };
 
