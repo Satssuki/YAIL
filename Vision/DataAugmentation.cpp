@@ -8,7 +8,7 @@ DataAugmentation::DataAugmentation(cv::Mat input) {
 cv::Mat DataAugmentation::GetAugmentedFrame()
 {
 	switch (_transformation) {
-	/*case (NONE):
+	case (NONE):
 		return _frame;
 	case (DISTORTION):
 		return this->Distortion();
@@ -23,9 +23,9 @@ cv::Mat DataAugmentation::GetAugmentedFrame()
 	case (LIGHTNING):
 		return this->Lightning();
 	case (PERSPECTIVE):
-		return this->Perspective();*/
-	default:
 		return this->Perspective();
+	default:
+		return _frame;
 	}
 }
 
