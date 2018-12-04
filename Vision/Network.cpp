@@ -142,6 +142,7 @@ float Network::Evaluate()
 
 void Network::UpdateBatch(std::tuple<std::vector<cv::Mat>, std::vector<int>> batch)
 {
+
 }
 
 Eigen::VectorXf Network::Forward(Eigen::VectorXf input)
