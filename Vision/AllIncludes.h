@@ -29,3 +29,7 @@
 #include "DataAugmentation.h"
 
 #include "Network.h"
+
+
+//Static function
+#include "Function.h"

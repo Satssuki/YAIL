@@ -49,6 +49,7 @@ void Network::LoadWeights(std::string filename)
 
 void Network::Train()
 {
+	
 }
 
 std::vector<float> Network::Predict(cv::Mat image)
@@ -73,21 +74,27 @@ void Network::NormalInitialization()
 	std::normal_distribution<float> distribution(0.0, 1.0);
 	auto normal = [&](float) {return distribution(generator); };
 
-	Weights.resize(Layers.size() - 1);
 
 	for(int i = 1; i < Layers.size(); i++) 
 	{
 		Biases.push_back(Eigen::VectorXf::NullaryExpr(Layers[i].Size(), normal));
-		for (int iw = 0; iw < Layers[i].Size(); iw++)
-		{
-			Weights[i - 1].push_back(Eigen::VectorXf::NullaryExpr(Layers[i - 1].Size(), normal));
-		}	
+		Weights.push_back(Eigen::MatrixXf::NullaryExpr(Layers[i].Size(),Layers[i - 1].Size(), normal));
+	
 	}
 
 	std::cout << "Initialization finished" << std::endl;
 }
 
-Eigen::VectorXf Network::Forward(Eigen::VectorXf input)
+Eigen::VectorXf Network::Forward(Eigen::VectorXf A)
 {
-	return Eigen::VectorXf();
+
+	Eigen::VectorXf Z;
+
+
+	for (int iLayers = 0; iLayers < Layers.size(); iLayers++) 
+	{
+		Z = Weights[iLayers] * A + Biases[iLayers];
+		A = Function::ActivationFunc(Activation::sigmoid, Z);
+	}
+	return A;
 }

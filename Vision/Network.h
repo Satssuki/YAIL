@@ -33,6 +33,6 @@ private:
 
 	std::vector<Layer> Layers;
 	std::vector<Eigen::VectorXf> Biases;
-	std::vector< std::vector<Eigen::VectorXf>> Weights;
+	std::vector<Eigen::MatrixXf> Weights;
 };
 

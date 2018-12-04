@@ -66,6 +66,9 @@
     <ClCompile Include="Input.cpp">
       <Filter>Fichiers sources\Network\Layers</Filter>
     </ClCompile>
+    <ClCompile Include="Function.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AllIncludes.h">
@@ -100,6 +103,9 @@
     </ClInclude>
     <ClInclude Include="Input.h">
       <Filter>Fichiers d%27en-tête\Network\Layers</Filter>
+    </ClInclude>
+    <ClInclude Include="Function.h">
+      <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
