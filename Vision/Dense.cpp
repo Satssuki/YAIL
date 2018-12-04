@@ -9,4 +9,8 @@ namespace Layers {
 	Dense::~Dense()
 	{
 	}
+	std::string Dense::ToString()
+	{
+		return "Dense";
+	}
 }

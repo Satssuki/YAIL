@@ -160,9 +160,11 @@
     <ClCompile Include="DataAugmentation.cpp" />
     <ClCompile Include="DataLoader.cpp" />
     <ClCompile Include="Dense.cpp" />
+    <ClCompile Include="Function.cpp" />
     <ClCompile Include="GuessTest.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Layer.cpp" />
+    <ClCompile Include="MNIST.cpp" />
     <ClCompile Include="Network.cpp" />
     <ClCompile Include="Vision.cpp" />
   </ItemGroup>
@@ -172,10 +174,12 @@
     <ClInclude Include="DataAugmentation.h" />
     <ClInclude Include="DataLoader.h" />
     <ClInclude Include="Dense.h" />
+    <ClInclude Include="Function.h" />
     <ClInclude Include="GuessTest.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Layer.h" />
     <ClInclude Include="Loss.h" />
+    <ClInclude Include="MNIST.h" />
     <ClInclude Include="Network.h" />
     <ClInclude Include="Optimizer.h" />
   </ItemGroup>

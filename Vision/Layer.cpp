@@ -12,6 +12,7 @@ Layer::Layer(int neurons, std::string activation)
 Layer::Layer(int neurons, Activation activation)
 {
 	Neurons = neurons;
+	_Activation = activation;
 }
 
 Layer::Layer(int neurons)
@@ -27,5 +28,10 @@ Layer::~Layer()
 int Layer::Size()
 {
 	return Neurons;
+}
+
+std::string Layer::ToString()
+{
+	return std::string();
 }
 
