@@ -19,3 +19,4 @@ Book by Ian Goodfellow and Yoshua Bengio and Aaron Courville: http://www.deeplea
 - [Eigen](http://eigen.tuxfamily.org/index.php?title=Main_Page) linear algebra \
 Setup: Open the project properties page (Project | Properties), in the C/C++ folder open the General page, and after Additional Include Directories put EIGENDIR (the folder in which you store the Eigen library).   
 - [OpenCV](https://opencv.org/releases.html) quick [guide](https://github.com/pascal-canuel/VSOpenCV) to install it on visual studio  
+- [Boost](https://www.boost.org/users/download/) For test and serialization (this module need to be [build](https://stackoverflow.com/questions/13042561/fatal-error-lnk1104-cannot-open-file-libboost-system-vc110-mt-gd-1-51-lib))
