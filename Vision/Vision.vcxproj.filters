@@ -13,33 +13,93 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Fichiers sources\Network">
+      <UniqueIdentifier>{7fc0973d-985f-4a3d-a2b2-da9351280898}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\Network">
+      <UniqueIdentifier>{0ed35cc6-8d05-4fec-8ef7-a3c0646d48cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\Network\Layers">
+      <UniqueIdentifier>{5a0b871b-6b07-4647-81ab-838715ea605a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\Network\Layers">
+      <UniqueIdentifier>{723a4d9b-b7ea-44bc-a187-5ee17ff1322c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\Data">
+      <UniqueIdentifier>{5e8f3cdb-8d0a-455d-b8ad-415decdd47ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\Data">
+      <UniqueIdentifier>{80d4ab2a-c552-4cfa-9326-66b6739dfeb8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\Test">
+      <UniqueIdentifier>{f9431e82-5974-4eb5-aff3-a794f96f942e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\Test">
+      <UniqueIdentifier>{0dac1b0e-782e-4136-ab37-da6b3bb9a7a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\Enum">
+      <UniqueIdentifier>{dbd4ed41-ee63-4902-88c5-9f8747c04835}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Vision.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="DataLoader.cpp">
-      <Filter>Fichiers sources</Filter>
+    <ClCompile Include="Layer.cpp">
+      <Filter>Fichiers sources\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Network.cpp">
+      <Filter>Fichiers sources\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Dense.cpp">
+      <Filter>Fichiers sources\Network\Layers</Filter>
     </ClCompile>
     <ClCompile Include="DataAugmentation.cpp">
-      <Filter>Fichiers sources</Filter>
+      <Filter>Fichiers sources\Data</Filter>
     </ClCompile>
-    <ClCompile Include="Matrice.cpp">
-      <Filter>Fichiers sources</Filter>
+    <ClCompile Include="DataLoader.cpp">
+      <Filter>Fichiers sources\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="GuessTest.cpp">
+      <Filter>Fichiers sources\Test</Filter>
+    </ClCompile>
+    <ClCompile Include="Input.cpp">
+      <Filter>Fichiers sources\Network\Layers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DataLoader.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="AllIncludes.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="DataAugmentation.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+    <ClInclude Include="Network.h">
+      <Filter>Fichiers d%27en-tête\Network</Filter>
     </ClInclude>
-    <ClInclude Include="Matrice.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+    <ClInclude Include="Dense.h">
+      <Filter>Fichiers d%27en-tête\Network\Layers</Filter>
+    </ClInclude>
+    <ClInclude Include="Layer.h">
+      <Filter>Fichiers d%27en-tête\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="DataAugmentation.h">
+      <Filter>Fichiers d%27en-tête\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="DataLoader.h">
+      <Filter>Fichiers d%27en-tête\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="GuessTest.h">
+      <Filter>Fichiers d%27en-tête\Test</Filter>
+    </ClInclude>
+    <ClInclude Include="Optimizer.h">
+      <Filter>Fichiers d%27en-tête\Enum</Filter>
+    </ClInclude>
+    <ClInclude Include="Loss.h">
+      <Filter>Fichiers d%27en-tête\Enum</Filter>
+    </ClInclude>
+    <ClInclude Include="Activation.h">
+      <Filter>Fichiers d%27en-tête\Enum</Filter>
+    </ClInclude>
+    <ClInclude Include="Input.h">
+      <Filter>Fichiers d%27en-tête\Network\Layers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -18,7 +18,14 @@
 #include <array>       
 #include <random>       
 #include <chrono>    
+#include <string>
 
 // our classes
+
+#include "GuessTest.h"
+
+// data
 #include "DataLoader.h"
 #include "DataAugmentation.h"
+
+#include "Network.h"
