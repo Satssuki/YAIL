@@ -32,8 +32,6 @@ public:
 	cv::Mat GetAugmentedFrame();
 	~DataAugmentation();
 private:
-	// Useful functions
-	bool inRange(int x, int be, int en);
 	// Types of transformations
 	cv::Mat Distortion();
 	cv::Mat Translate();

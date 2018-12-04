@@ -8,7 +8,7 @@ DataAugmentation::DataAugmentation(cv::Mat input) {
 cv::Mat DataAugmentation::GetAugmentedFrame()
 {
 	switch (_transformation) {
-	case (NONE):
+	/*case (NONE):
 		return _frame;
 	case (DISTORTION):
 		return this->Distortion();
@@ -25,19 +25,13 @@ cv::Mat DataAugmentation::GetAugmentedFrame()
 	case (LIGHTNING):
 		return this->Lightning();
 	case (PERSPECTIVE):
-		return this->Perspective();
+		return this->Perspective();*/
 	default:
-		return this->Distortion();
+		return this->Translate();
 	}
 }
 
 DataAugmentation::~DataAugmentation() {}
-
-#pragma region Scaling transformations
-bool DataAugmentation::inRange(int x, int be, int en)
-{
-	return (be <= x && x < en);
-}
 
 cv::Mat DataAugmentation::Distortion()
 {
@@ -96,11 +90,13 @@ cv::Mat DataAugmentation::Distortion()
 		}
 	return _reshapedFrame;
 }
-#pragma endregion
 
 cv::Mat DataAugmentation::Translate()
 {
-	return cv::Mat();
+	float offsetX = rand() % 250;
+	cv::Mat trans_mat = (cv::Mat_<double>(2, 3) << 1, 0, 120, 0, 1, -100);
+	cv::warpAffine(_frame, _reshapedFrame, trans_mat, _frame.size());
+	return _reshapedFrame;
 }
 
 cv::Mat DataAugmentation::Rotate()
