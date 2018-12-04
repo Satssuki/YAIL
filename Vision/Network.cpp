@@ -138,7 +138,54 @@ int Network::Evaluate()
 
 void Network::UpdateBatch(std::tuple<std::vector<cv::Mat>, std::vector<int>> batch)
 {
+	std::vector<Eigen::MatrixXf> sumWeightsError;
+	std::vector<Eigen::VectorXf> sumBiasesError;
+	for (int i = 0; i < Layers.size() - 1; i++)
+	{
+		sumBiasesError.push_back(Eigen::VectorXf(Biases[i].rows));
+		sumWeightsError.push_back(Eigen::VectorXf(Weights[i].rows, Weights[i].cols));
+	}
 
+	for (int i = 0; i < BatchSize; i++)
+	{
+		cv::Mat imageCV = std::get<0>(batch)[i];
+		// Todo convert mat to eigen vec
+		Eigen::VectorXf image;
+		int label = std::get<1>(batch)[i];
+
+		auto errorWeightsBiases = BackPropagation(image, label);
+
+		for (int iL = 0; iL < Layers.size() - 1; iL++)
+		{
+			sumWeightsError[iL] += std::get<0>(errorWeightsBiases)[iL];
+			sumBiasesError[iL] += std::get<1>(errorWeightsBiases)[iL];
+		}	
+	}
+	
+	for (int i = 0; i < Layers.size() - 1; i++)
+	{
+		Weights[i] = Weights[i] - LearningRate / (float)BatchSize * sumWeightsError[i];
+		Biases[i] = Biases[i] - LearningRate / (float)BatchSize * sumBiasesError[i];
+	}
+}
+
+std::tuple<std::vector<Eigen::MatrixXf>, std::vector<Eigen::VectorXf>> Network::BackPropagation(Eigen::VectorXf image, int label)
+{
+	std::vector< Eigen::VectorXf> activations;
+	std::vector< Eigen::VectorXf> beforeActivations;
+	Eigen::VectorXf a = image;
+	for (int i = 0; i < Layers.size(); i++)
+	{
+		Eigen::VectorXf z = Weights[i] * a + Biases[i];
+		a = Function::ActivationFunction(Layers[i + 1]->_Activation, z);
+
+		beforeActivations.push_back(z);
+		activations.push_back(a);
+	}
+
+	Eigen::VectorXf lastLayerError = Function::ErrorFunction(_Loss, activations[activations.size()- 1]);
+
+	return std::tuple<std::vector<Eigen::MatrixXf>, std::vector<Eigen::VectorXf>>();
 }
 
 Eigen::VectorXf Network::Forward(Eigen::VectorXf input)
@@ -147,7 +194,7 @@ Eigen::VectorXf Network::Forward(Eigen::VectorXf input)
 	for (int iLayers = 0; iLayers < Layers.size(); iLayers++) 
 	{
 		Eigen::VectorXf z = Weights[iLayers] * a + Biases[iLayers];
-		a = Function::ActivationFunc(Activation::sigmoid, z);
+		a = Function::ActivationFunction(Layers[iLayers + 1]->_Activation, z);
 	}
 
 	return a;

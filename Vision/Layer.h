@@ -21,6 +21,7 @@ public:
 
 	int Size();
 	virtual std::string ToString();
+	Activation _Activation;
 private:
 	int Neurons;
 };
