@@ -25,7 +25,7 @@ cv::Mat DataAugmentation::GetAugmentedFrame()
 	case (PERSPECTIVE):
 		return this->Perspective();*/
 	default:
-		return this->Noise();
+		return this->Perspective();
 	}
 }
 
@@ -121,10 +121,50 @@ cv::Mat DataAugmentation::Noise()
 
 cv::Mat DataAugmentation::Lightning()
 {
-	return cv::Mat();
+	_reshapedFrame = _frame.clone();
+	for (int rows = 0; rows < _frame.rows; rows++) {
+		for (int cols = 0; cols < _frame.cols; cols++) {
+			_reshapedFrame.at<cv::Vec3b>(rows, cols)[0] = _frame.at<cv::Vec3b>(rows, cols)[0] + 80;
+			_reshapedFrame.at<cv::Vec3b>(rows, cols)[1] = _frame.at<cv::Vec3b>(rows, cols)[1];
+			_reshapedFrame.at<cv::Vec3b>(rows, cols)[2] = _frame.at<cv::Vec3b>(rows, cols)[2];
+		}
+	}
+	return _reshapedFrame;
 }
 
 cv::Mat DataAugmentation::Perspective()
 {
-	return cv::Mat();
+	// Input Quadilateral or Image plane coordinates
+	cv::Point2f inputQuad[4];
+	// Output Quadilateral or World plane coordinates
+	cv::Point2f outputQuad[4];
+
+	// Lambda Matrix
+	cv::Mat lambda(2, 4, CV_32FC1);
+	//Input and Output Image;
+	cv::Mat input;
+
+	//Load the image
+	input = _frame;
+	// Set the lambda matrix the same type and size as input
+	lambda = cv::Mat::zeros(input.rows, input.cols, input.type());
+
+	// The 4 points that select quadilateral on the input , from top-left in clockwise order
+	// These four pts are the sides of the rect box used as input 
+	inputQuad[0] = cv::Point2f(-30, -60);
+	inputQuad[1] = cv::Point2f(input.cols + 50, -50);
+	inputQuad[2] = cv::Point2f(input.cols + 100, input.rows + 50);
+	inputQuad[3] = cv::Point2f(-50, input.rows + 50);
+	// The 4 points where the mapping is to be done , from top-left in clockwise order
+	outputQuad[0] = cv::Point2f(0, 0);
+	outputQuad[1] = cv::Point2f(input.cols - 1, 0);
+	outputQuad[2] = cv::Point2f(input.cols - 1, input.rows - 1);
+	outputQuad[3] = cv::Point2f(0, input.rows - 1);
+
+	// Get the Perspective Transform Matrix i.e. lambda 
+	lambda = getPerspectiveTransform(inputQuad, outputQuad);
+	// Apply the Perspective Transform just found to the src image
+	warpPerspective(input, _reshapedFrame, lambda, _reshapedFrame.size());
+
+	return _reshapedFrame;
 }
