@@ -86,3 +86,8 @@ void Network::NormalInitialization()
 
 	std::cout << "Initialization finished" << std::endl;
 }
+
+Eigen::VectorXf Network::Forward(Eigen::VectorXf input)
+{
+	return Eigen::VectorXf();
+}

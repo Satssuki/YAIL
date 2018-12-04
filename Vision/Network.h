@@ -29,6 +29,7 @@ public:
 
 private:
 	void NormalInitialization();
+	Eigen::VectorXf Forward(Eigen::VectorXf input);
 
 	std::vector<Layer> Layers;
 	std::vector<Eigen::VectorXf> Biases;
