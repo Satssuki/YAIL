@@ -37,7 +37,7 @@ cv::Mat DataAugmentation::Distortion()
 {
 	_reshapedFrame = _frame.clone();
 	double sigma = 4.0;
-	double alpha = 100;
+	double alpha = 50;
 	bool bNorm = false; _reshapedFrame.clone();
 
 
@@ -93,8 +93,8 @@ cv::Mat DataAugmentation::Distortion()
 
 cv::Mat DataAugmentation::Translate()
 {
-	float offsetX = rand() % 250;
-	float offsetY = rand() % 100;
+	float offsetX = rand() % 240 - 120;
+	float offsetY = rand() % 240 - 120;
 	cv::Mat trans_mat = (cv::Mat_<double>(2, 3) << 1, 0, offsetX, 0, 1, offsetY);
 	cv::warpAffine(_frame, _reshapedFrame, trans_mat, _frame.size());
 	return _reshapedFrame;
@@ -119,8 +119,8 @@ cv::Mat DataAugmentation::SaltNPepper()
 	cv::Mat saltPepperNoise = cv::Mat::zeros(_frame.rows, _frame.cols, CV_8U);
 	cv::randu(saltPepperNoise, 0, 255);
 
-	cv::Mat black = saltPepperNoise < 30;
-	cv::Mat white = saltPepperNoise > 225;
+	cv::Mat black = saltPepperNoise < 15;
+	cv::Mat white = saltPepperNoise > 245;
 
 	_reshapedFrame = _frame.clone();
 	_reshapedFrame.setTo(255, white);
