@@ -12,10 +12,10 @@ class Network
 {
 public:
 	Network();
-	Network(std::vector<Layer> layers);
+	Network(std::vector<Layer*> layers);
 	~Network();
 
-	void Add(Layer layer);
+	void Add(Layer* layer);
 	void Compile(std::string optimizer = "sgd", std::string loss = "mse");
 	void Compile(Optimizer optimizer = stochastic_gradient_descent, Loss loss = mean_squared_error);
 	void Fit(std::tuple < std::vector<cv::Mat>, std::vector<int>> train, std::tuple < std::vector<cv::Mat>, std::vector<int>> test);
@@ -31,7 +31,7 @@ private:
 	void NormalInitialization();
 	Eigen::VectorXf Forward(Eigen::VectorXf input);
 
-	std::vector<Layer> Layers;
+	std::vector<Layer*> Layers;
 	std::vector<Eigen::VectorXf> Biases;
 	std::vector< std::vector<Eigen::VectorXf>> Weights;
 

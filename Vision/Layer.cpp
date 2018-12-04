@@ -29,3 +29,8 @@ int Layer::Size()
 	return Neurons;
 }
 
+std::string Layer::ToString()
+{
+	return std::string();
+}
+

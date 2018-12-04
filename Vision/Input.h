@@ -12,6 +12,8 @@ namespace Layers {
 		Input();
 		Input(int neurons) :Layer(neurons) {};
 		~Input();
+
+		std::string ToString();
 	};
 }
 #endif

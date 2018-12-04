@@ -9,5 +9,9 @@ namespace Layers {
 	Input::~Input()
 	{
 	}
+	std::string Input::ToString()
+	{
+		return "Input";
+	}
 }
 	

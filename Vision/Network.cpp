@@ -6,7 +6,7 @@ Network::Network()
 {
 }
 
-Network::Network(std::vector<Layer> layers)
+Network::Network(std::vector<Layer*> layers)
 {
 	Layers = layers;
 }
@@ -16,7 +16,7 @@ Network::~Network()
 {
 }
 
-void Network::Add(Layer layer)
+void Network::Add(Layer* layer)
 {
 	Layers.push_back(layer);
 }
@@ -54,6 +54,7 @@ void Network::LoadWeights(std::string filename)
 
 void Network::Train()
 {
+
 }
 
 std::vector<float> Network::Predict(cv::Mat image)
@@ -63,7 +64,12 @@ std::vector<float> Network::Predict(cv::Mat image)
 
 void Network::Summary()
 {
-
+	std::cout << "Layer (type) | Output Shape | Param #" << std::endl;
+	std::cout << Layers[0]->ToString() + " | " + std::to_string(Layers[0]->Size()) + " | 0" << std::endl;
+	for (int i = 1; i < Layers.size(); i++)
+	{
+		std::cout << Layers[i]->ToString() + " | " + std::to_string(Layers[i]->Size()) + " | " + std::to_string(Layers[i - 1]->Size() * Layers[i]->Size() + Layers[i]->Size()) << std::endl;
+	}
 }
 
 void Network::Plot()
@@ -82,10 +88,10 @@ void Network::NormalInitialization()
 
 	for(int i = 1; i < Layers.size(); i++) 
 	{
-		Biases.push_back(Eigen::VectorXf::NullaryExpr(Layers[i].Size(), normal));
-		for (int iw = 0; iw < Layers[i].Size(); iw++)
+		Biases.push_back(Eigen::VectorXf::NullaryExpr(Layers[i]->Size(), normal));
+		for (int iw = 0; iw < Layers[i]->Size(); iw++)
 		{
-			Weights[i - 1].push_back(Eigen::VectorXf::NullaryExpr(Layers[i - 1].Size(), normal));
+			Weights[i - 1].push_back(Eigen::VectorXf::NullaryExpr(Layers[i - 1]->Size(), normal));
 		}	
 	}
 
