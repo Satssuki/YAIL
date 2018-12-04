@@ -12,8 +12,8 @@ enum AugmentationType {
 	DISTORTION,
 	TRANSLATION,
 	ROTATION,
-	FINER_ROTATION,
 	FLIPPING,
+	NOISE,
 	PEPPER_AND_SALT,
 	LIGHTNING,
 	PERSPECTIVE,
@@ -37,6 +37,7 @@ private:
 	cv::Mat Translate();
 	cv::Mat Rotate();
 	cv::Mat Flip();
+	cv::Mat SaltNPepper();
 	cv::Mat Noise();
 	cv::Mat Lightning();
 	cv::Mat Perspective();

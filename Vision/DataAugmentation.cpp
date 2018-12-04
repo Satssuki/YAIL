@@ -8,7 +8,7 @@ DataAugmentation::DataAugmentation(cv::Mat input) {
 cv::Mat DataAugmentation::GetAugmentedFrame()
 {
 	switch (_transformation) {
-	case (NONE):
+	/*case (NONE):
 		return _frame;
 	case (DISTORTION):
 		return this->Distortion();
@@ -19,13 +19,15 @@ cv::Mat DataAugmentation::GetAugmentedFrame()
 	case (FLIPPING):
 		return this->Flip();
 	case (PEPPER_AND_SALT):
+		return this->SaltNPepper();
+	case (NOISE):
 		return this->Noise();
 	case (LIGHTNING):
 		return this->Lightning();
 	case (PERSPECTIVE):
-		return this->Perspective();
+		return this->Perspective();*/
 	default:
-		return _frame;
+		return SaltNPepper();
 	}
 }
 
@@ -109,6 +111,21 @@ cv::Mat DataAugmentation::Rotate()
 cv::Mat DataAugmentation::Flip()
 {
 	cv::flip(_frame, _reshapedFrame, 1);
+	return _reshapedFrame;
+}
+
+cv::Mat DataAugmentation::SaltNPepper()
+{
+	cv::Mat saltPepperNoise = cv::Mat::zeros(_frame.rows, _frame.cols, CV_8U);
+	cv::randu(saltPepperNoise, 0, 255);
+
+	cv::Mat black = saltPepperNoise < 30;
+	cv::Mat white = saltPepperNoise > 225;
+
+	_reshapedFrame = _frame.clone();
+	_reshapedFrame.setTo(255, white);
+	_reshapedFrame.setTo(0, black);
+
 	return _reshapedFrame;
 }
 
