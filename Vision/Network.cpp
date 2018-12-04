@@ -52,9 +52,46 @@ void Network::LoadWeights(std::string filename)
 {
 }
 
+template<typename T>
+std::vector<T> slice(std::vector<T> const &v, int m, int n)
+{
+	auto first = v.cbegin() + m;
+	auto last = v.cbegin() + n + 1;
+
+	std::vector<T> vec(first, last);
+	return vec;
+}
+
 void Network::Train()
 {
+	for (int e = 0; e < Epoch; e++)
+	{
+		std::vector<std::tuple<std::vector<cv::Mat>, std::vector<int>>> batches;
+		int trainDataSize = std::get<0>(TrainData).size();
+		int totalBatches = ceil(trainDataSize / (float)BatchSize);
+		for (int b = 0; b < totalBatches; b++)
+		{
+			std::vector<cv::Mat> batchImages;
+			std::vector<int> batchLabels;
+			int i = b * BatchSize;
 
+			if (b == totalBatches - 1)
+			{
+				batchImages = slice(std::get<0>(TrainData), i, (trainDataSize - 1));
+				batchLabels = slice(std::get<1>(TrainData), i, (trainDataSize - 1));
+			}
+			else
+			{
+				batchImages = slice(std::get<0>(TrainData), i, i + BatchSize - 1);
+				batchLabels = slice(std::get<1>(TrainData), i, i + BatchSize - 1);
+			}
+
+			UpdateBatch({ batchImages, batchLabels });
+		}
+
+		std::cout << "Epoch " << e << " : " + std::to_string(Evaluate()) << " / " << std::to_string(std::get<0>(TestData).size()) << std::endl;
+	}
+	std::cout << "Training completed" << std::endl;
 }
 
 std::vector<float> Network::Predict(cv::Mat image)
@@ -96,6 +133,15 @@ void Network::NormalInitialization()
 	}
 
 	std::cout << "Initialization finished" << std::endl;
+}
+
+float Network::Evaluate()
+{
+	return 0.0f;
+}
+
+void Network::UpdateBatch(std::tuple<std::vector<cv::Mat>, std::vector<int>> batch)
+{
 }
 
 Eigen::VectorXf Network::Forward(Eigen::VectorXf input)

@@ -29,6 +29,8 @@ public:
 
 private:
 	void NormalInitialization();
+	float Evaluate();
+	void UpdateBatch(std::tuple < std::vector<cv::Mat>, std::vector<int>> batch);
 	Eigen::VectorXf Forward(Eigen::VectorXf input);
 
 	std::vector<Layer*> Layers;
