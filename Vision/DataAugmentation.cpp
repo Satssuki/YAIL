@@ -16,8 +16,6 @@ cv::Mat DataAugmentation::GetAugmentedFrame()
 		return this->Translate();
 	case (ROTATION):
 		return this->Rotate();
-	case (FINER_ROTATION):
-		return this->Fine_Rotate();
 	case (FLIPPING):
 		return this->Flip();
 	case (PEPPER_AND_SALT):
@@ -27,7 +25,7 @@ cv::Mat DataAugmentation::GetAugmentedFrame()
 	case (PERSPECTIVE):
 		return this->Perspective();*/
 	default:
-		return this->Rotate();
+		return this->Noise();
 	}
 }
 
@@ -94,8 +92,8 @@ cv::Mat DataAugmentation::Distortion()
 cv::Mat DataAugmentation::Translate()
 {
 	float offsetX = rand() % 250;
-	float offsetY = rand() % 250;
-	cv::Mat trans_mat = (cv::Mat_<double>(2, 3) << 1, 0, offsetX, 0, 1, -offsetY);
+	float offsetY = rand() % 100;
+	cv::Mat trans_mat = (cv::Mat_<double>(2, 3) << 1, 0, offsetX, 0, 1, offsetY);
 	cv::warpAffine(_frame, _reshapedFrame, trans_mat, _frame.size());
 	return _reshapedFrame;
 }
@@ -108,19 +106,17 @@ cv::Mat DataAugmentation::Rotate()
 	return _reshapedFrame;
 }
 
-cv::Mat DataAugmentation::Fine_Rotate()
-{
-	return cv::Mat();
-}
-
 cv::Mat DataAugmentation::Flip()
 {
-	return cv::Mat();
+	cv::flip(_frame, _reshapedFrame, 1);
+	return _reshapedFrame;
 }
 
 cv::Mat DataAugmentation::Noise()
 {
-	return cv::Mat();
+	_reshapedFrame = _frame.clone();
+	cv::blur(_frame, _reshapedFrame, cv::Size(20, 20));
+	return _reshapedFrame;
 }
 
 cv::Mat DataAugmentation::Lightning()

@@ -36,7 +36,6 @@ private:
 	cv::Mat Distortion();
 	cv::Mat Translate();
 	cv::Mat Rotate();
-	cv::Mat Fine_Rotate();
 	cv::Mat Flip();
 	cv::Mat Noise();
 	cv::Mat Lightning();
