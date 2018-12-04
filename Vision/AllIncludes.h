@@ -21,15 +21,14 @@
 #include <string>
 
 // our classes
-
 #include "GuessTest.h"
 
 // data
 #include "DataLoader.h"
 #include "DataAugmentation.h"
+#include "MNIST.h"
 
 #include "Network.h"
-
 
 //Static function
 #include "Function.h"

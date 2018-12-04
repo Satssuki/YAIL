@@ -20,7 +20,7 @@ public:
 	~Layer();
 
 	int Size();
-
+	virtual std::string ToString();
 private:
 	int Neurons;
 };
