@@ -6,6 +6,7 @@
 #include "Loss.h"
 
 #include "Dense.h"
+#include "Input.h"
 
 class Network
 {
@@ -25,5 +26,13 @@ public:
 	std::vector<float> Predict(cv::Mat image);
 	void Summary();
 	void Plot();	
+
+private:
+	void NormalInitialization();
+	Eigen::VectorXf Forward(Eigen::VectorXf input);
+
+	std::vector<Layer> Layers;
+	std::vector<Eigen::VectorXf> Biases;
+	std::vector< std::vector<Eigen::VectorXf>> Weights;
 };
 
