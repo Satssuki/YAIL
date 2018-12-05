@@ -135,11 +135,38 @@ void Network::NormalInitialization()
 
 int Network::Evaluate()
 {
-	return 0.0f;
+	int goodResult = 0;
+	for (int i = 0; i < std::get<0>(TestData).size(); i++)
+	{
+		// Todo call function to convert opencv mat to eigen vec
+		Eigen::Map<Eigen::Matrix<float, 64, 192, Eigen::RowMajor>> eigen_mat(reinterpret_cast<float*>(std::get<0>(TestData)[i].data));
+		Eigen::Map<Eigen::RowVectorXf> image(eigen_mat.data(), eigen_mat.size());
+
+		Eigen::VectorXf L = Forward(image);
+		float max = L(0);
+		int maxIndex = 0;
+		for (int v = 1; v < L.rows(); v++)
+		{
+			if (max < L(v))
+			{
+				max = L(v);
+				maxIndex = v;
+			}
+		}
+
+		if (std::get<1>(TestData)[i])
+		{
+			goodResult++;
+		}
+	}
+
+	return goodResult;
 }
 
 void Network::UpdateBatch(std::tuple<std::vector<cv::Mat>, std::vector<int>> batch)
 {
+	int currentBatchSize = std::get<0>(batch).size();
+
 	std::vector<Eigen::MatrixXf> sumWeightsError;
 	std::vector<Eigen::VectorXf> sumBiasesError;
 	for (int i = 0; i < Layers.size() - 1; i++)
@@ -148,7 +175,7 @@ void Network::UpdateBatch(std::tuple<std::vector<cv::Mat>, std::vector<int>> bat
 		sumBiasesError.push_back(Eigen::VectorXf(Biases[i].rows()));	
 	}
 
-	for (int i = 0; i < BatchSize; i++)
+	for (int i = 0; i < currentBatchSize; i++)
 	{
 		cv::Mat imageCV = std::get<0>(batch)[i];
 
@@ -169,8 +196,8 @@ void Network::UpdateBatch(std::tuple<std::vector<cv::Mat>, std::vector<int>> bat
 	
 	for (int i = 0; i < Layers.size() - 1; i++)
 	{
-		Weights[i].array() -= (LearningRate / (float)BatchSize) * sumWeightsError[i].array();
-		Biases[i].array() -= (LearningRate / (float)BatchSize) * sumBiasesError[i].array();
+		Weights[i].array() -= (LearningRate / (float)currentBatchSize) * sumWeightsError[i].array();
+		Biases[i].array() -= (LearningRate / (float)currentBatchSize) * sumBiasesError[i].array();
 	}
 }
 
@@ -214,7 +241,7 @@ std::tuple<std::vector<Eigen::MatrixXf>, std::vector<Eigen::VectorXf>> Network::
 Eigen::VectorXf Network::Forward(Eigen::VectorXf input)
 {	
 	Eigen::VectorXf a = input;
-	for (int iL = 0; iL < Layers.size(); iL++) 
+	for (int iL = 0; iL < Layers.size() - 1; iL++) 
 	{
 		Eigen::VectorXf z = Weights[iL] * a + Biases[iL];
 		a = Function::ActivationFunction(Layers[iL + 1]->_Activation, z);
