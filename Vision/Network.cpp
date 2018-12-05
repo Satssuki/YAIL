@@ -139,7 +139,7 @@ int Network::Evaluate()
 	for (int i = 0; i < std::get<0>(TestData).size(); i++)
 	{
 		// Todo call function to convert opencv mat to eigen vec
-		Eigen::Map<Eigen::Matrix<float, 64, 192, Eigen::RowMajor>> eigen_mat(reinterpret_cast<float*>(std::get<0>(TestData)[i].data));
+		Eigen::Map<Eigen::Matrix<float, 28, 28, Eigen::RowMajor>> eigen_mat(reinterpret_cast<float*>(std::get<0>(TestData)[i].data));
 		Eigen::Map<Eigen::RowVectorXf> image(eigen_mat.data(), eigen_mat.size());
 
 		Eigen::VectorXf L = Forward(image);
@@ -181,7 +181,7 @@ void Network::UpdateBatch(std::tuple<std::vector<cv::Mat>, std::vector<int>> bat
 		cv::Mat imageCV = std::get<0>(batch)[i];
 
 		// Todo call function to convert opencv mat to eigen vec
-		Eigen::Map<Eigen::Matrix<float, 64, 192, Eigen::RowMajor>> eigen_mat(reinterpret_cast<float*>(imageCV.data));
+		Eigen::Map<Eigen::Matrix<float, 28, 28, Eigen::RowMajor>> eigen_mat(reinterpret_cast<float*>(imageCV.data));
 		Eigen::Map<Eigen::RowVectorXf> image(eigen_mat.data(), eigen_mat.size());
 
 		int label = std::get<1>(batch)[i];
