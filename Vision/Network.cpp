@@ -4,11 +4,13 @@
 
 Network::Network()
 {
+	CleanFmt = Eigen::IOFormat(4, 0, ", ", ";\n", "[", "]", "[", "]");
 }
 
 Network::Network(std::vector<Layer*> layers)
 {
 	Layers = layers;
+	CleanFmt = Eigen::IOFormat(4, 0, ", ", ";\n", "[", "]", "[", "]");
 }
 
 
@@ -128,7 +130,7 @@ void Network::NormalInitialization()
 
 	for(int i = 1; i < Layers.size(); i++) 
 	{
-		Biases.push_back(Eigen::VectorXf::NullaryExpr(Layers[i]->Size(), normal));
+		Biases.push_back(Eigen::VectorXf::NullaryExpr(Layers[i]->Size(), normal));		
 		Weights.push_back(Eigen::MatrixXf::NullaryExpr(Layers[i]->Size(),Layers[i - 1]->Size(), normal));
 	}
 
@@ -137,14 +139,14 @@ void Network::NormalInitialization()
 
 int Network::Evaluate()
 {
-	int goodResult = 0;
+	// this is a test
+	std::vector<int> predictions;
 	for (int i = 0; i < std::get<0>(TestData).size(); i++)
 	{
 		// Todo call function to convert opencv mat to eigen vec
 		cv::Mat imageCV = std::get<0>(TestData)[i];
 		Eigen::Map<Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> mat(reinterpret_cast<float*>(imageCV.data), imageCV.rows, imageCV.cols * imageCV.channels());
 		Eigen::Map<Eigen::RowVectorXf> image(mat.data(), mat.size());
-
 		Eigen::VectorXf L = Forward(image);
 		float max = L(0);
 		int maxIndex = 0;
@@ -157,8 +159,13 @@ int Network::Evaluate()
 				maxIndex = v;
 			}
 		}
+		predictions.push_back(maxIndex);
+	}
 
-		if (std::get<1>(TestData)[i] == maxIndex)
+	int goodResult = 0;
+	for (int i = 0; i < std::get<0>(TestData).size(); i++)
+	{
+		if (std::get<1>(TestData)[i] == predictions[i])
 		{
 			goodResult++;
 		}
@@ -250,7 +257,7 @@ Eigen::VectorXf Network::Forward(Eigen::VectorXf input)
 		Eigen::VectorXf z = Weights[iL] * a + Biases[iL];
 		a = Function::ActivationFunction(Layers[iL + 1]->_Activation, z);
 	}
-
+	
 	return a;
 }
 
