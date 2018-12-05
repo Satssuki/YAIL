@@ -1,6 +1,7 @@
 #pragma once
 
 #include "AllIncludes.h"
+#include <opencv2/core/eigen.hpp>
 
 #include "Optimizer.h"
 #include "Loss.h"

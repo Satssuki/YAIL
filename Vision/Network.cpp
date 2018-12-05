@@ -72,7 +72,7 @@ void Network::Train()
 		std::vector<std::tuple<std::vector<cv::Mat>, std::vector<int>>> batches;
 		int trainDataSize = std::get<0>(TrainData).size();
 		int totalBatches = ceil(trainDataSize / (float)BatchSize);
-		for (int b = 0; b < totalBatches; b++)
+		for (int b = 0; b < 100; b++)
 		{
 			std::vector<cv::Mat> batchImages;
 			std::vector<int> batchLabels;
@@ -154,7 +154,7 @@ int Network::Evaluate()
 			}
 		}
 
-		if (std::get<1>(TestData)[i])
+		if (std::get<1>(TestData)[i] == maxIndex)
 		{
 			goodResult++;
 		}
@@ -252,7 +252,7 @@ Eigen::VectorXf Network::Forward(Eigen::VectorXf input)
 
 Eigen::VectorXf Network::ConvertLabel2LastLayer(int label)
 {
-	Eigen::Vector2f lastLayer = Eigen::Vector2f::Zero(Layers.back()->Size());
+	Eigen::VectorXf lastLayer = Eigen::VectorXf::Zero(Layers.back()->Size());
 	lastLayer(label) = 1;
 
 	return lastLayer;
