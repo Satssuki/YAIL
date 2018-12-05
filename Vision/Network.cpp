@@ -72,7 +72,7 @@ void Network::Train()
 		std::vector<std::tuple<std::vector<cv::Mat>, std::vector<int>>> batches;
 		int trainDataSize = std::get<0>(TrainData).size();
 		int totalBatches = ceil(trainDataSize / (float)BatchSize);
-		for (int b = 0; b < 100; b++)
+		for (int b = 0; b < totalBatches; b++)
 		{
 			std::vector<cv::Mat> batchImages;
 			std::vector<int> batchLabels;
@@ -90,6 +90,8 @@ void Network::Train()
 			}
 
 			UpdateBatch({ batchImages, batchLabels });
+
+			if (totalBatches % 100 == 0) { std::cout << b << " / " << totalBatches << std::endl; }
 		}
 
 		std::cout << "Epoch " << e << " : " + std::to_string(Evaluate()) << " / " << std::to_string(std::get<0>(TestData).size()) << std::endl;
@@ -148,9 +150,10 @@ int Network::Evaluate()
 		int maxIndex = 0;
 		for (int v = 1; v < L.rows(); v++)
 		{
-			if (max < L(v))
+			float n = L(v);
+			if (max < n)
 			{
-				max = L(v);
+				max = n;
 				maxIndex = v;
 			}
 		}
@@ -196,8 +199,8 @@ void Network::UpdateBatch(std::tuple<std::vector<cv::Mat>, std::vector<int>> bat
 	
 	for (int i = 0; i < Layers.size() - 1; i++)
 	{
-		Weights[i].array() -= (LearningRate / (float)currentBatchSize) * sumWeightsError[i].array();
-		Biases[i].array() -= (LearningRate / (float)currentBatchSize) * sumBiasesError[i].array();
+		Weights[i].array() = Weights[i].array() - (LearningRate / (float)currentBatchSize) * sumWeightsError[i].array();
+		Biases[i].array() = Biases[i].array() - (LearningRate / (float)currentBatchSize) * sumBiasesError[i].array();
 	}
 }
 
@@ -220,10 +223,11 @@ std::tuple<std::vector<Eigen::MatrixXf>, std::vector<Eigen::VectorXf>> Network::
 	std::vector< Eigen::MatrixXf> deltaWeights;
 	std::vector< Eigen::VectorXf> deltaBiases;
 
-	Eigen::VectorXf delta = Function::ErrorFunction(_Loss, ConvertLabel2LastLayer(label), activations.back());
-	Eigen::VectorXf deltaPrime = Function::ActivationFunctionPrime(Layers.back()->_Activation, zs.back());
+	Eigen::VectorXf costPrime = Function::ErrorFunction(_Loss, ConvertLabel2LastLayer(label), activations.back());
+	Eigen::VectorXf sigmoidPrime = Function::ActivationFunctionPrime(Layers.back()->_Activation, zs.back());
+	Eigen::VectorXf delta = costPrime.array() * sigmoidPrime.array();
 
-	deltaBiases.push_back(delta.array() * deltaPrime.array());
+	deltaBiases.push_back(delta);
 	deltaWeights.push_back(delta * activations[activations.size() - 2].transpose());
 
 	for (int i = 2; i < Layers.size(); i++)
