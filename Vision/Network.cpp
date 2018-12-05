@@ -72,7 +72,7 @@ void Network::Train()
 		std::vector<std::tuple<std::vector<cv::Mat>, std::vector<int>>> batches;
 		int trainDataSize = std::get<0>(TrainData).size();
 		int totalBatches = ceil(trainDataSize / (float)BatchSize);
-		for (int b = 0; b < 100; b++)
+		for (int b = 0; b < totalBatches; b++)
 		{
 			std::vector<cv::Mat> batchImages;
 			std::vector<int> batchLabels;
@@ -92,7 +92,7 @@ void Network::Train()
 			UpdateBatch({ batchImages, batchLabels });
 		}
 
-		std::cout << "Epoch " << e << " : " + std::to_string(Evaluate()) << " / " << std::to_string(std::get<0>(TestData).size()) << std::endl;
+ 		std::cout << "Epoch " << e << " : " + std::to_string(Evaluate()) << " / " << std::to_string(std::get<0>(TestData).size()) << std::endl;
 	}
 	std::cout << "Training completed" << std::endl;
 }
@@ -147,9 +147,10 @@ int Network::Evaluate()
 		int maxIndex = 0;
 		for (int v = 1; v < L.rows(); v++)
 		{
-			if (max < L(v))
+			float n = L(v);
+			if (max < n)
 			{
-				max = L(v);
+				max = n;
 				maxIndex = v;
 			}
 		}
@@ -171,8 +172,8 @@ void Network::UpdateBatch(std::tuple<std::vector<cv::Mat>, std::vector<int>> bat
 	std::vector<Eigen::VectorXf> sumBiasesError;
 	for (int i = 0; i < Layers.size() - 1; i++)
 	{
-		sumWeightsError.push_back(Eigen::MatrixXf(Weights[i].rows(), Weights[i].cols()));
-		sumBiasesError.push_back(Eigen::VectorXf(Biases[i].rows()));	
+		sumWeightsError.push_back(Eigen::MatrixXf::Zero(Weights[i].rows(), Weights[i].cols()));
+		sumBiasesError.push_back(Eigen::VectorXf::Zero(Biases[i].rows()));	
 	}
 
 	for (int i = 0; i < currentBatchSize; i++)
