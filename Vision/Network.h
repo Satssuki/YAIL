@@ -32,8 +32,8 @@ private:
 	int Evaluate();
 	void UpdateBatch(std::tuple < std::vector<cv::Mat>, std::vector<int>> batch);
 	std::tuple < std::vector < Eigen::MatrixXf>, std::vector<Eigen::VectorXf> > BackPropagation(Eigen::VectorXf image, int label);
-
 	Eigen::VectorXf Forward(Eigen::VectorXf input);
+	Eigen::VectorXf ConvertLabel2LastLayer(int label);
 
 	std::vector<Layer*> Layers;
 	std::vector<Eigen::VectorXf> Biases;

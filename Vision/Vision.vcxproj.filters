@@ -66,11 +66,11 @@
     <ClCompile Include="Input.cpp">
       <Filter>Fichiers sources\Network\Layers</Filter>
     </ClCompile>
-    <ClCompile Include="Function.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="MNIST.cpp">
-      <Filter>Fichiers sources</Filter>
+      <Filter>Fichiers sources\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="Function.cpp">
+      <Filter>Fichiers sources\Network</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -107,11 +107,11 @@
     <ClInclude Include="Input.h">
       <Filter>Fichiers d%27en-tête\Network\Layers</Filter>
     </ClInclude>
-    <ClInclude Include="Function.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="MNIST.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+      <Filter>Fichiers d%27en-tête\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Function.h">
+      <Filter>Fichiers d%27en-tête\Network</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

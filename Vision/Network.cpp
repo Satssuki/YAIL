@@ -30,6 +30,8 @@ void Network::Compile(Optimizer optimizer, Loss loss)
 {
 	_Optimizer = optimizer;
 	_Loss = loss;
+
+	NormalInitialization();
 }
 
 void Network::Fit(std::tuple<std::vector<cv::Mat>, std::vector<int>> train, std::tuple<std::vector<cv::Mat>, std::vector<int>> test)
@@ -142,55 +144,71 @@ void Network::UpdateBatch(std::tuple<std::vector<cv::Mat>, std::vector<int>> bat
 	std::vector<Eigen::VectorXf> sumBiasesError;
 	for (int i = 0; i < Layers.size() - 1; i++)
 	{
-		//sumWeightsError.push_back(Eigen::MatrixXf(Weights[i].rows, Weights[i].cols)); error not standart syntax?
-		//sumBiasesError.push_back(Eigen::VectorXf(Biases[i].rows));	
-
-		sumWeightsError.push_back(Eigen::MatrixXf());
-		sumBiasesError.push_back(Eigen::VectorXf());
+		sumWeightsError.push_back(Eigen::MatrixXf(Weights[i].rows(), Weights[i].cols()));
+		sumBiasesError.push_back(Eigen::VectorXf(Biases[i].rows()));	
 	}
 
 	for (int i = 0; i < BatchSize; i++)
 	{
 		cv::Mat imageCV = std::get<0>(batch)[i];
-		// Todo convert mat to eigen vec
-		Eigen::VectorXf image;
+
+		// Todo call function to convert opencv mat to eigen vec
+		Eigen::Map<Eigen::Matrix<float, 64, 192, Eigen::RowMajor>> eigen_mat(reinterpret_cast<float*>(imageCV.data));
+		Eigen::Map<Eigen::RowVectorXf> image(eigen_mat.data(), eigen_mat.size());
+
 		int label = std::get<1>(batch)[i];
 
 		auto errorWeightsBiases = BackPropagation(image, label);
 
 		for (int iL = 0; iL < Layers.size() - 1; iL++)
 		{
-			sumWeightsError[iL] += std::get<0>(errorWeightsBiases)[iL];
-			sumBiasesError[iL] += std::get<1>(errorWeightsBiases)[iL];
+			sumWeightsError[iL].array() += std::get<0>(errorWeightsBiases)[iL].array();
+			sumBiasesError[iL].array() += std::get<1>(errorWeightsBiases)[iL].array();
 		}	
 	}
 	
 	for (int i = 0; i < Layers.size() - 1; i++)
 	{
-		Weights[i] = Weights[i] - LearningRate / (float)BatchSize * sumWeightsError[i];
-		Biases[i] = Biases[i] - LearningRate / (float)BatchSize * sumBiasesError[i];
+		Weights[i].array() -= (LearningRate / (float)BatchSize) * sumWeightsError[i].array();
+		Biases[i].array() -= (LearningRate / (float)BatchSize) * sumBiasesError[i].array();
 	}
 }
 
 std::tuple<std::vector<Eigen::MatrixXf>, std::vector<Eigen::VectorXf>> Network::BackPropagation(Eigen::VectorXf image, int label)
 {
 	std::vector< Eigen::VectorXf> activations;
-	std::vector< Eigen::VectorXf> beforeActivations;
+	activations.push_back(image);
+
+	std::vector< Eigen::VectorXf> zs;
 	Eigen::VectorXf a = image;
-	for (int i = 0; i < Layers.size(); i++)
+	for (int i = 0; i < Layers.size() - 1; i++)
 	{
 		Eigen::VectorXf z = Weights[i] * a + Biases[i];
 		a = Function::ActivationFunction(Layers[i + 1]->_Activation, z);
 
-		beforeActivations.push_back(z);
+		zs.push_back(z);
 		activations.push_back(a);
 	}
 
-	Eigen::VectorXf lastLayerError = Function::ErrorFunction(_Loss, activations[activations.size()- 1]);
+	std::vector< Eigen::MatrixXf> deltaWeights;
+	std::vector< Eigen::VectorXf> deltaBiases;
 
-	// Todo propagate error backward
+	Eigen::VectorXf delta = Function::ErrorFunction(_Loss, ConvertLabel2LastLayer(label), activations.back());
+	Eigen::VectorXf deltaPrime = Function::ActivationFunctionPrime(Layers.back()->_Activation, zs.back());
 
-	return std::tuple<std::vector<Eigen::MatrixXf>, std::vector<Eigen::VectorXf>>();
+	deltaBiases.push_back(delta.array() * deltaPrime.array());
+	deltaWeights.push_back(delta * activations[activations.size() - 2].transpose());
+
+	for (int i = 2; i < Layers.size(); i++)
+	{
+		Eigen::VectorXf sp = Function::ActivationFunctionPrime(Layers[Layers.size() - i]->_Activation, zs[zs.size() - i]);
+		delta = (Weights[Weights.size() - i + 1].transpose() * delta).array() * sp.array();
+
+		deltaBiases.insert(deltaBiases.begin(), delta);
+		deltaWeights.insert(deltaWeights.begin(), delta * activations[activations.size() - i - 1].transpose());
+	}
+
+	return {deltaWeights, deltaBiases};
 }
 
 Eigen::VectorXf Network::Forward(Eigen::VectorXf input)
@@ -203,4 +221,12 @@ Eigen::VectorXf Network::Forward(Eigen::VectorXf input)
 	}
 
 	return a;
+}
+
+Eigen::VectorXf Network::ConvertLabel2LastLayer(int label)
+{
+	Eigen::Vector2f lastLayer = Eigen::Vector2f::Zero(Layers.back()->Size());
+	lastLayer(label) = 1;
+
+	return lastLayer;
 }
