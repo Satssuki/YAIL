@@ -139,8 +139,9 @@ int Network::Evaluate()
 	for (int i = 0; i < std::get<0>(TestData).size(); i++)
 	{
 		// Todo call function to convert opencv mat to eigen vec
-		Eigen::Map<Eigen::Matrix<float, 28, 28, Eigen::RowMajor>> eigen_mat(reinterpret_cast<float*>(std::get<0>(TestData)[i].data));
-		Eigen::Map<Eigen::RowVectorXf> image(eigen_mat.data(), eigen_mat.size());
+		cv::Mat imageCV = std::get<0>(TestData)[i];
+		Eigen::Map<Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> mat(reinterpret_cast<float*>(imageCV.data), imageCV.rows, imageCV.cols * imageCV.channels());
+		Eigen::Map<Eigen::RowVectorXf> image(mat.data(), mat.size());
 
 		Eigen::VectorXf L = Forward(image);
 		float max = L(0);
@@ -171,8 +172,8 @@ void Network::UpdateBatch(std::tuple<std::vector<cv::Mat>, std::vector<int>> bat
 	std::vector<Eigen::VectorXf> sumBiasesError;
 	for (int i = 0; i < Layers.size() - 1; i++)
 	{
-		sumWeightsError.push_back(Eigen::MatrixXf(Weights[i].rows(), Weights[i].cols()));
-		sumBiasesError.push_back(Eigen::VectorXf(Biases[i].rows()));	
+		sumWeightsError.push_back(Eigen::MatrixXf::Zero(Weights[i].rows(), Weights[i].cols())); // Hint: maybe replace order?
+		sumBiasesError.push_back(Eigen::VectorXf::Zero(Biases[i].rows()));
 	}
 
 	for (int i = 0; i < currentBatchSize; i++)
@@ -180,11 +181,10 @@ void Network::UpdateBatch(std::tuple<std::vector<cv::Mat>, std::vector<int>> bat
 		cv::Mat imageCV = std::get<0>(batch)[i];
 
 		// Todo call function to convert opencv mat to eigen vec
-		Eigen::Map<Eigen::Matrix<float, 28, 28, Eigen::RowMajor>> eigen_mat(reinterpret_cast<float*>(imageCV.data));
-		Eigen::Map<Eigen::RowVectorXf> image(eigen_mat.data(), eigen_mat.size());
+		Eigen::Map<Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> mat(reinterpret_cast<float*>(imageCV.data), imageCV.rows, imageCV.cols * imageCV.channels());
+		Eigen::Map<Eigen::RowVectorXf> image(mat.data(), mat.size());
 
 		int label = std::get<1>(batch)[i];
-
 		auto errorWeightsBiases = BackPropagation(image, label);
 
 		for (int iL = 0; iL < Layers.size() - 1; iL++)
