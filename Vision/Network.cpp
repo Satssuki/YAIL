@@ -91,7 +91,7 @@ void Network::Train()
 
 			UpdateBatch({ batchImages, batchLabels });
 
-			if (totalBatches % 100 == 0) { std::cout << b << " / " << totalBatches << std::endl; }
+			if (b % 100 == 0) { std::cout << b << " / " << totalBatches << std::endl; }
 		}
 
 		std::cout << "Epoch " << e << " : " + std::to_string(Evaluate()) << " / " << std::to_string(std::get<0>(TestData).size()) << std::endl;
