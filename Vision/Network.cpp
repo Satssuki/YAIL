@@ -69,13 +69,19 @@ std::vector<T> slice(std::vector<T> const &v, int m, int n)
 
 void Network::Train()
 {
+	clock_t total;
 	for (int e = 0; e < Epoch; e++)
 	{
-		std::vector<std::tuple<std::vector<cv::Mat>, std::vector<int>>> batches;
+		unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+		shuffle(std::get<0>(TrainData).begin(), std::get<0>(TrainData).end(), std::default_random_engine(seed));
+		shuffle(std::get<1>(TrainData).begin(), std::get<1>(TrainData).end(), std::default_random_engine(seed));
+
 		int trainDataSize = std::get<0>(TrainData).size();
 		int totalBatches = ceil(trainDataSize / (float)BatchSize);
 		for (int b = 0; b < totalBatches; b++)
 		{
+			clock_t startTime = clock();
+
 			std::vector<cv::Mat> batchImages;
 			std::vector<int> batchLabels;
 			int i = b * BatchSize;
@@ -93,12 +99,16 @@ void Network::Train()
 
 			UpdateBatch({ batchImages, batchLabels });
 
-			if (b % 100 == 0) { std::cout << b << " / " << totalBatches << std::endl; }
+			clock_t endTime = clock();
+			clock_t clockTicksTaken = endTime - startTime;
+			total += clockTicksTaken;
+			double timeInSeconds = clockTicksTaken / (double)CLOCKS_PER_SEC;
+			if (b % 100 == 0) { std::cout << "\rBatch " << b << " / " << totalBatches << " " << (int)(timeInSeconds / 60) << " min"; }
 		}
-
-		std::cout << "Epoch " << e << " : " + std::to_string(Evaluate()) << " / " << std::to_string(std::get<0>(TestData).size()) << std::endl;
+		std::cout << "\r                     ";
+		std::cout << "\rEpoch " << e << " : " + std::to_string(Evaluate()) << " / " << std::to_string(std::get<0>(TestData).size()) << std::endl;
 	}
-	std::cout << "Training completed" << std::endl;
+	std::cout << "Training completed. Took " << (int)(total / 60) << " min" << std::endl;
 }
 
 std::vector<float> Network::Predict(cv::Mat image)
@@ -110,10 +120,13 @@ void Network::Summary()
 {
 	std::cout << "Layer (type) | Output Shape | Param #" << std::endl;
 	std::cout << Layers[0]->ToString() + " | " + std::to_string(Layers[0]->Size()) + " | 0" << std::endl;
+	int total = 0;
 	for (int i = 1; i < Layers.size(); i++)
 	{
+		total += Layers[i - 1]->Size() * Layers[i]->Size() + Layers[i]->Size();
 		std::cout << Layers[i]->ToString() + " | " + std::to_string(Layers[i]->Size()) + " | " + std::to_string(Layers[i - 1]->Size() * Layers[i]->Size() + Layers[i]->Size()) << std::endl;
 	}
+	std::cout <<  "Total |  | " << total << std::endl;
 }
 
 void Network::Plot()
@@ -139,7 +152,7 @@ void Network::NormalInitialization()
 
 int Network::Evaluate()
 {
-	// this is a test
+	// this is a test put two loops into one method
 	std::vector<int> predictions;
 	for (int i = 0; i < std::get<0>(TestData).size(); i++)
 	{
