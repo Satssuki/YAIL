@@ -1,5 +1,6 @@
 #include "DataAugmentation.h"
 
+// Les translations et blur sont trop intense. Elle doit etre fait selon la dimension de l'image et non hardcodé
 void DataAugmentation::GetAugmentedFrame(cv::Mat &input)
 {
 	AugmentationType _transformation = (AugmentationType)(rand() % PERSPECTIVE);
