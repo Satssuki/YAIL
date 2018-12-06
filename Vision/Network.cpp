@@ -4,11 +4,13 @@
 
 Network::Network()
 {
+	CleanFmt = Eigen::IOFormat(4, 0, ", ", ";\n", "[", "]", "[", "]");
 }
 
 Network::Network(std::vector<Layer*> layers)
 {
 	Layers = layers;
+	CleanFmt = Eigen::IOFormat(4, 0, ", ", ";\n", "[", "]", "[", "]");
 }
 
 
@@ -30,6 +32,8 @@ void Network::Compile(Optimizer optimizer, Loss loss)
 {
 	_Optimizer = optimizer;
 	_Loss = loss;
+
+	NormalInitialization();
 }
 
 void Network::Fit(std::tuple<std::vector<cv::Mat>, std::vector<int>> train, std::tuple<std::vector<cv::Mat>, std::vector<int>> test)
@@ -65,13 +69,19 @@ std::vector<T> slice(std::vector<T> const &v, int m, int n)
 
 void Network::Train()
 {
+	clock_t total;
 	for (int e = 0; e < Epoch; e++)
 	{
-		std::vector<std::tuple<std::vector<cv::Mat>, std::vector<int>>> batches;
+		unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+		shuffle(std::get<0>(TrainData).begin(), std::get<0>(TrainData).end(), std::default_random_engine(seed));
+		shuffle(std::get<1>(TrainData).begin(), std::get<1>(TrainData).end(), std::default_random_engine(seed));
+
 		int trainDataSize = std::get<0>(TrainData).size();
 		int totalBatches = ceil(trainDataSize / (float)BatchSize);
 		for (int b = 0; b < totalBatches; b++)
 		{
+			clock_t startTime = clock();
+
 			std::vector<cv::Mat> batchImages;
 			std::vector<int> batchLabels;
 			int i = b * BatchSize;
@@ -88,11 +98,17 @@ void Network::Train()
 			}
 
 			UpdateBatch({ batchImages, batchLabels });
-		}
 
-		std::cout << "Epoch " << e << " : " + std::to_string(Evaluate()) << " / " << std::to_string(std::get<0>(TestData).size()) << std::endl;
+			clock_t endTime = clock();
+			clock_t clockTicksTaken = endTime - startTime;
+			total += clockTicksTaken;
+			double timeInSeconds = clockTicksTaken / (double)CLOCKS_PER_SEC;
+			if (b % 100 == 0) { std::cout << "\rBatch " << b << " / " << totalBatches << " " << (int)(timeInSeconds / 60) << " min"; }
+		}
+		std::cout << "\r                     ";
+		std::cout << "\rEpoch " << e << " : " + std::to_string(Evaluate()) << " / " << std::to_string(std::get<0>(TestData).size()) << std::endl;
 	}
-	std::cout << "Training completed" << std::endl;
+	std::cout << "Training completed. Took " << (int)(total / 60) << " min" << std::endl;
 }
 
 std::vector<float> Network::Predict(cv::Mat image)
@@ -104,10 +120,13 @@ void Network::Summary()
 {
 	std::cout << "Layer (type) | Output Shape | Param #" << std::endl;
 	std::cout << Layers[0]->ToString() + " | " + std::to_string(Layers[0]->Size()) + " | 0" << std::endl;
+	int total = 0;
 	for (int i = 1; i < Layers.size(); i++)
 	{
+		total += Layers[i - 1]->Size() * Layers[i]->Size() + Layers[i]->Size();
 		std::cout << Layers[i]->ToString() + " | " + std::to_string(Layers[i]->Size()) + " | " + std::to_string(Layers[i - 1]->Size() * Layers[i]->Size() + Layers[i]->Size()) << std::endl;
 	}
+	std::cout <<  "Total |  | " << total << std::endl;
 }
 
 void Network::Plot()
@@ -124,7 +143,7 @@ void Network::NormalInitialization()
 
 	for(int i = 1; i < Layers.size(); i++) 
 	{
-		Biases.push_back(Eigen::VectorXf::NullaryExpr(Layers[i]->Size(), normal));
+		Biases.push_back(Eigen::VectorXf::NullaryExpr(Layers[i]->Size(), normal));		
 		Weights.push_back(Eigen::MatrixXf::NullaryExpr(Layers[i]->Size(),Layers[i - 1]->Size(), normal));
 	}
 
@@ -133,74 +152,132 @@ void Network::NormalInitialization()
 
 int Network::Evaluate()
 {
-	return 0.0f;
+	// this is a test put two loops into one method
+	std::vector<int> predictions;
+	for (int i = 0; i < std::get<0>(TestData).size(); i++)
+	{
+		// Todo call function to convert opencv mat to eigen vec
+		cv::Mat imageCV = std::get<0>(TestData)[i];
+		Eigen::Map<Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> mat(reinterpret_cast<float*>(imageCV.data), imageCV.rows, imageCV.cols * imageCV.channels());
+		Eigen::Map<Eigen::RowVectorXf> image(mat.data(), mat.size());
+		Eigen::VectorXf L = Forward(image);
+		float max = L(0);
+		int maxIndex = 0;
+		for (int v = 1; v < L.rows(); v++)
+		{
+			float n = L(v);
+			if (max < n)
+			{
+				max = n;
+				maxIndex = v;
+			}
+		}
+		predictions.push_back(maxIndex);
+	}
+
+	int goodResult = 0;
+	for (int i = 0; i < std::get<0>(TestData).size(); i++)
+	{
+		if (std::get<1>(TestData)[i] == predictions[i])
+		{
+			goodResult++;
+		}
+	}
+
+	return goodResult;
 }
 
 void Network::UpdateBatch(std::tuple<std::vector<cv::Mat>, std::vector<int>> batch)
 {
+	int currentBatchSize = std::get<0>(batch).size();
+
 	std::vector<Eigen::MatrixXf> sumWeightsError;
 	std::vector<Eigen::VectorXf> sumBiasesError;
 	for (int i = 0; i < Layers.size() - 1; i++)
 	{
-		//sumWeightsError.push_back(Eigen::MatrixXf(Weights[i].rows, Weights[i].cols)); error not standart syntax?
-		//sumBiasesError.push_back(Eigen::VectorXf(Biases[i].rows));	
-
-		sumWeightsError.push_back(Eigen::MatrixXf());
-		sumBiasesError.push_back(Eigen::VectorXf());
+		sumWeightsError.push_back(Eigen::MatrixXf::Zero(Weights[i].rows(), Weights[i].cols())); // Hint: maybe replace order?
+		sumBiasesError.push_back(Eigen::VectorXf::Zero(Biases[i].rows()));
 	}
 
-	for (int i = 0; i < BatchSize; i++)
+	for (int i = 0; i < currentBatchSize; i++)
 	{
 		cv::Mat imageCV = std::get<0>(batch)[i];
-		// Todo convert mat to eigen vec
-		Eigen::VectorXf image;
-		int label = std::get<1>(batch)[i];
 
+		// Todo call function to convert opencv mat to eigen vec
+		Eigen::Map<Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> mat(reinterpret_cast<float*>(imageCV.data), imageCV.rows, imageCV.cols * imageCV.channels());
+		Eigen::Map<Eigen::RowVectorXf> image(mat.data(), mat.size());
+
+		int label = std::get<1>(batch)[i];
 		auto errorWeightsBiases = BackPropagation(image, label);
 
 		for (int iL = 0; iL < Layers.size() - 1; iL++)
 		{
-			sumWeightsError[iL] += std::get<0>(errorWeightsBiases)[iL];
-			sumBiasesError[iL] += std::get<1>(errorWeightsBiases)[iL];
+			sumWeightsError[iL].array() += std::get<0>(errorWeightsBiases)[iL].array();
+			sumBiasesError[iL].array() += std::get<1>(errorWeightsBiases)[iL].array();
 		}	
 	}
 	
 	for (int i = 0; i < Layers.size() - 1; i++)
 	{
-		Weights[i] = Weights[i] - LearningRate / (float)BatchSize * sumWeightsError[i];
-		Biases[i] = Biases[i] - LearningRate / (float)BatchSize * sumBiasesError[i];
+		Weights[i].array() = Weights[i].array() - (LearningRate / (float)currentBatchSize) * sumWeightsError[i].array();
+		Biases[i].array() = Biases[i].array() - (LearningRate / (float)currentBatchSize) * sumBiasesError[i].array();
 	}
 }
 
 std::tuple<std::vector<Eigen::MatrixXf>, std::vector<Eigen::VectorXf>> Network::BackPropagation(Eigen::VectorXf image, int label)
 {
 	std::vector< Eigen::VectorXf> activations;
-	std::vector< Eigen::VectorXf> beforeActivations;
+	activations.push_back(image);
+
+	std::vector< Eigen::VectorXf> zs;
 	Eigen::VectorXf a = image;
-	for (int i = 0; i < Layers.size(); i++)
+	for (int i = 0; i < Layers.size() - 1; i++)
 	{
 		Eigen::VectorXf z = Weights[i] * a + Biases[i];
 		a = Function::ActivationFunction(Layers[i + 1]->_Activation, z);
 
-		beforeActivations.push_back(z);
+		zs.push_back(z);
 		activations.push_back(a);
 	}
 
-	Eigen::VectorXf lastLayerError = Function::ErrorFunction(_Loss, activations[activations.size()- 1]);
+	std::vector< Eigen::MatrixXf> deltaWeights;
+	std::vector< Eigen::VectorXf> deltaBiases;
 
-	// Todo propagate error backward
+	Eigen::VectorXf costPrime = Function::ErrorFunction(_Loss, ConvertLabel2LastLayer(label), activations.back());
+	Eigen::VectorXf sigmoidPrime = Function::ActivationFunctionPrime(Layers.back()->_Activation, zs.back());
+	Eigen::VectorXf delta = costPrime.array() * sigmoidPrime.array();
 
-	return std::tuple<std::vector<Eigen::MatrixXf>, std::vector<Eigen::VectorXf>>();
+	deltaBiases.push_back(delta);
+	deltaWeights.push_back(delta * activations[activations.size() - 2].transpose());
+
+	for (int i = 2; i < Layers.size(); i++)
+	{
+		Eigen::VectorXf sp = Function::ActivationFunctionPrime(Layers[Layers.size() - i]->_Activation, zs[zs.size() - i]);
+		delta = (Weights[Weights.size() - i + 1].transpose() * delta).array() * sp.array();
+
+		deltaBiases.insert(deltaBiases.begin(), delta);
+		deltaWeights.insert(deltaWeights.begin(), delta * activations[activations.size() - i - 1].transpose());
+	}
+
+	return {deltaWeights, deltaBiases};
 }
 
 Eigen::VectorXf Network::Forward(Eigen::VectorXf input)
 {	
 	Eigen::VectorXf a = input;
-	for (int iL = 0; iL < Layers.size(); iL++) 
+	for (int iL = 0; iL < Layers.size() - 1; iL++) 
 	{
 		Eigen::VectorXf z = Weights[iL] * a + Biases[iL];
 		a = Function::ActivationFunction(Layers[iL + 1]->_Activation, z);
 	}
-
+	
 	return a;
+}
+
+Eigen::VectorXf Network::ConvertLabel2LastLayer(int label)
+{
+	Eigen::VectorXf lastLayer = Eigen::VectorXf::Zero(Layers.back()->Size());
+	lastLayer(label) = 1;
+
+	return lastLayer;
 }
