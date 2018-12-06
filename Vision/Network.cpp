@@ -232,9 +232,6 @@ void Network::UpdateBatch(std::tuple<std::vector<cv::Mat>, std::vector<int>> bat
 	for (int i = 0; i < currentBatchSize; i++)
 	{
 		cv::Mat imageCV = std::get<0>(batch)[i];
-		if (i % 3 == 0) {
-			//DataAugmentation::GetAugmentedFrame(imageCV, false);
-		}
 			
 		int label = std::get<1>(batch)[i];
 		auto errorWeightsBiases = BackPropagation(cv2eigen::Convert(imageCV), label);
