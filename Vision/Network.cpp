@@ -66,13 +66,13 @@ void Network::SaveWeights(std::string filename)
 	// save weights first
 	for (int i = 0; i < Weights.size();  i++)
 	{
-		//EigenSerializer::SaveMatrix(of, Weights[i]);
+		EigenSerializer::SaveMatrix(of, Weights[i]);
 	}
 
 	// save biases
 	for (int i = 0; i < Biases.size(); i++)
 	{
-		//EigenSerializer::SaveVector(of, Biases[i]);
+		EigenSerializer::SaveVector(of, Biases[i]);
 	}
 
 	of.close();
@@ -86,13 +86,13 @@ void Network::LoadWeights(std::string filename)
 	// load weights first
 	for (int i = 0; i < Weights.size(); i++)
 	{
-		//EigenSerializer.LoadMatrix(inf, Weights[i]);
+		EigenSerializer::LoadMatrix(inf, Weights[i]);
 	}
 
 	// load biases
 	for (int i = 0; i < Biases.size(); i++)
 	{
-		//EigenSerializer::LoadVector(inf, Biases[i]);
+		EigenSerializer::LoadVector(inf, Biases[i]);
 	}
 
 	inf.close();
@@ -133,9 +133,24 @@ void Network::Train()
 	std::cout << "Training completed" << std::endl;
 }
 
-std::vector<float> Network::Predict(cv::Mat image)
+int Network::Predict(cv::Mat image)
 {
-	return std::vector<float>();
+	Eigen::Map<Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> mat(reinterpret_cast<float*>(image.data), image.rows, image.cols * image.channels());
+	Eigen::Map<Eigen::RowVectorXf> imageEigen(mat.data(), mat.size());
+	Eigen::VectorXf L = Forward(imageEigen);
+	float max = L(0);
+	int maxIndex = 0;
+	for (int v = 1; v < L.rows(); v++)
+	{
+		float n = L(v);
+		if (max < n)
+		{
+			max = n;
+			maxIndex = v;
+		}
+	}
+
+	return maxIndex;
 }
 
 void Network::Summary()

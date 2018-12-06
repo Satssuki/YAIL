@@ -12,7 +12,7 @@ EigenSerializer::~EigenSerializer()
 {
 }
 
-void EigenSerializer::SaveMatrix(std::ofstream of, Eigen::MatrixXf mat)
+void EigenSerializer::SaveMatrix(std::ofstream& of, Eigen::MatrixXf mat)
 {
 	int rows = mat.rows();
 	of.write((char*)&rows, sizeof(int));
@@ -24,7 +24,7 @@ void EigenSerializer::SaveMatrix(std::ofstream of, Eigen::MatrixXf mat)
 	of.write((char*)&data[0], sizeof(float) * rows * cols);
 }
 
-void EigenSerializer::SaveVector(std::ofstream of, Eigen::VectorXf vec)
+void EigenSerializer::SaveVector(std::ofstream& of, Eigen::VectorXf vec)
 {
 	int rows = vec.rows();
 	of.write((char*)&rows, sizeof(int));
@@ -33,7 +33,7 @@ void EigenSerializer::SaveVector(std::ofstream of, Eigen::VectorXf vec)
 	of.write((char*)&data[0], sizeof(float) * rows);
 }
 
-void EigenSerializer::LoadMatrix(std::ifstream inf, Eigen::MatrixXf & mat)
+void EigenSerializer::LoadMatrix(std::ifstream& inf, Eigen::MatrixXf & mat)
 {
 	int rows = mat.rows();
 	inf.read((char*)&rows, sizeof(int));
@@ -45,7 +45,7 @@ void EigenSerializer::LoadMatrix(std::ifstream inf, Eigen::MatrixXf & mat)
 	inf.read((char*)&data[0], sizeof(float)* rows * cols);
 }
 
-void EigenSerializer::LoadVector(std::ifstream inf, Eigen::VectorXf & vec)
+void EigenSerializer::LoadVector(std::ifstream& inf, Eigen::VectorXf & vec)
 {
 	int rows = vec.rows();
 	inf.read((char*)&rows, sizeof(int));

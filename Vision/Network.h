@@ -24,7 +24,7 @@ public:
 	void SaveWeights(std::string filename);
 	void LoadWeights(std::string filename);
 	void Train();
-	std::vector<float> Predict(cv::Mat image);
+	int Predict(cv::Mat image);
 	void Summary();
 	void Plot();
 
