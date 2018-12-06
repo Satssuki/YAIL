@@ -69,13 +69,8 @@ std::vector<T> slice(std::vector<T> const &v, int m, int n)
 
 void Network::Train()
 {
-	clock_t total;
 	for (int e = 0; e < Epoch; e++)
 	{
-		unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-		shuffle(std::get<0>(TrainData).begin(), std::get<0>(TrainData).end(), std::default_random_engine(seed));
-		shuffle(std::get<1>(TrainData).begin(), std::get<1>(TrainData).end(), std::default_random_engine(seed));
-
 		int trainDataSize = std::get<0>(TrainData).size();
 		int totalBatches = ceil(trainDataSize / (float)BatchSize);
 		for (int b = 0; b < totalBatches; b++)
@@ -99,16 +94,12 @@ void Network::Train()
 
 			UpdateBatch({ batchImages, batchLabels });
 
-			clock_t endTime = clock();
-			clock_t clockTicksTaken = endTime - startTime;
-			total += clockTicksTaken;
-			double timeInSeconds = clockTicksTaken / (double)CLOCKS_PER_SEC;
-			if (b % 100 == 0) { std::cout << "\rBatch " << b << " / " << totalBatches << " " << (int)(timeInSeconds / 60) << " min"; }
+			if (b % 100 == 0) { std::cout << "\rBatch " << b << " / " << totalBatches; }
 		}
 		std::cout << "\r                     ";
 		std::cout << "\rEpoch " << e << " : " + std::to_string(Evaluate()) << " / " << std::to_string(std::get<0>(TestData).size()) << std::endl;
 	}
-	std::cout << "Training completed. Took " << (int)(total / 60) << " min" << std::endl;
+	std::cout << "Training completed" << std::endl;
 }
 
 std::vector<float> Network::Predict(cv::Mat image)

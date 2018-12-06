@@ -1,6 +1,6 @@
 #include "DataAugmentation.h"
 
-cv::Mat DataAugmentation::GetAugmentedFrame(cv::Mat &input)
+void DataAugmentation::GetAugmentedFrame(cv::Mat &input)
 {
 	AugmentationType _transformation = (AugmentationType)(rand() % PERSPECTIVE);
 	switch (_transformation) {
@@ -29,9 +29,9 @@ cv::Mat DataAugmentation::GetAugmentedFrame(cv::Mat &input)
 		Perspective(input);
 		break;
 	default:
-		return input;
+		return;
 	}
-	return input;
+
 } 
 
 void DataAugmentation::Distortion(cv::Mat &input)

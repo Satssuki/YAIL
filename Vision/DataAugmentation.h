@@ -27,7 +27,7 @@ class DataAugmentation
 {
 
 public:
-	static cv::Mat GetAugmentedFrame(cv::Mat &input);
+	static void GetAugmentedFrame(cv::Mat &input);
 private:
 
 	// Types of transformations
