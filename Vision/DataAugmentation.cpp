@@ -130,6 +130,7 @@ void DataAugmentation::Noise(cv::Mat &input)
 void DataAugmentation::Lightning(cv::Mat &input)
 {
 	input.convertTo(input, 1, 40, 40);
+	input.convertTo(input, CV_32FC1);
 }
 
 void DataAugmentation::Perspective(cv::Mat &input)
