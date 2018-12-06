@@ -75,6 +75,9 @@
     <ClCompile Include="EigenSerializer.cpp">
       <Filter>Fichiers sources\Data</Filter>
     </ClCompile>
+    <ClCompile Include="cv2eigen.cpp">
+      <Filter>Fichiers sources\Data</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AllIncludes.h">
@@ -117,6 +120,9 @@
       <Filter>Fichiers d%27en-tête\Network</Filter>
     </ClInclude>
     <ClInclude Include="EigenSerializer.h">
+      <Filter>Fichiers d%27en-tête\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="cv2eigen.h">
       <Filter>Fichiers d%27en-tête\Data</Filter>
     </ClInclude>
   </ItemGroup>

@@ -135,8 +135,7 @@ void Network::Train()
 
 int Network::Predict(cv::Mat image)
 {
-	Eigen::Map<Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> mat(reinterpret_cast<float*>(image.data), image.rows, image.cols * image.channels());
-	Eigen::Map<Eigen::RowVectorXf> imageEigen(mat.data(), mat.size());
+	Eigen::VectorXf imageEigen = cv2eigen::Convert(image);
 	Eigen::VectorXf L = Forward(imageEigen);
 	float max = L(0);
 	int maxIndex = 0;
@@ -194,8 +193,8 @@ int Network::Evaluate()
 	{
 		// Todo call function to convert opencv mat to eigen vec
 		cv::Mat imageCV = std::get<0>(TestData)[i];
-		Eigen::Map<Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> mat(reinterpret_cast<float*>(imageCV.data), imageCV.rows, imageCV.cols * imageCV.channels());
-		Eigen::Map<Eigen::RowVectorXf> image(mat.data(), mat.size());
+		Eigen::VectorXf image = cv2eigen::Convert(imageCV);
+
 		Eigen::VectorXf L = Forward(image);
 		float max = L(0);
 		int maxIndex = 0;
@@ -233,13 +232,12 @@ void Network::UpdateBatch(std::tuple<std::vector<cv::Mat>, std::vector<int>> bat
 	for (int i = 0; i < currentBatchSize; i++)
 	{
 		cv::Mat imageCV = std::get<0>(batch)[i];
-
-		// Todo call function to convert opencv mat to eigen vec
-		Eigen::Map<Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> mat(reinterpret_cast<float*>(imageCV.data), imageCV.rows, imageCV.cols * imageCV.channels());
-		Eigen::Map<Eigen::RowVectorXf> image(mat.data(), mat.size());
-
+		if (i % 3 == 0) {
+			//DataAugmentation::GetAugmentedFrame(imageCV, false);
+		}
+			
 		int label = std::get<1>(batch)[i];
-		auto errorWeightsBiases = BackPropagation(image, label);
+		auto errorWeightsBiases = BackPropagation(cv2eigen::Convert(imageCV), label);
 
 		for (int iL = 0; iL < Layers.size() - 1; iL++)
 		{
