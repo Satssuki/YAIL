@@ -72,6 +72,9 @@
     <ClCompile Include="Function.cpp">
       <Filter>Fichiers sources\Network</Filter>
     </ClCompile>
+    <ClCompile Include="EigenSerializer.cpp">
+      <Filter>Fichiers sources\Data</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AllIncludes.h">
@@ -112,6 +115,9 @@
     </ClInclude>
     <ClInclude Include="Function.h">
       <Filter>Fichiers d%27en-tête\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="EigenSerializer.h">
+      <Filter>Fichiers d%27en-tête\Data</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

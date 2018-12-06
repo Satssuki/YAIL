@@ -28,6 +28,7 @@
 #include "DataLoader.h"
 #include "DataAugmentation.h"
 #include "MNIST.h"
+#include "EigenSerializer.h"
 
 #include "Network.h"
 

@@ -49,9 +49,6 @@ void Network::Fit(std::tuple<std::vector<cv::Mat>, std::vector<int>> train, std:
 {
 	TrainData = train;
 	TestData = test;
-
-	std::get<0>(TestData) = slice(std::get<0>(TrainData), 0, 2000);
-	std::get<1>(TestData) = slice(std::get<1>(TrainData), 0, 2000);
 }
 
 void Network::Hyperparameter(int epoch, int batchSize, float learningRate)
@@ -63,10 +60,42 @@ void Network::Hyperparameter(int epoch, int batchSize, float learningRate)
 
 void Network::SaveWeights(std::string filename)
 {
+	std::ofstream of;
+	of.open(filename, std::ios::binary | std::ios::out);
+	
+	// save weights first
+	for (int i = 0; i < Weights.size();  i++)
+	{
+		//EigenSerializer::SaveMatrix(of, Weights[i]);
+	}
+
+	// save biases
+	for (int i = 0; i < Biases.size(); i++)
+	{
+		//EigenSerializer::SaveVector(of, Biases[i]);
+	}
+
+	of.close();
 }
 
 void Network::LoadWeights(std::string filename)
 {
+	std::ifstream inf;
+	inf.open(filename, std::ios::binary | std::ios::in);
+
+	// load weights first
+	for (int i = 0; i < Weights.size(); i++)
+	{
+		//EigenSerializer.LoadMatrix(inf, Weights[i]);
+	}
+
+	// load biases
+	for (int i = 0; i < Biases.size(); i++)
+	{
+		//EigenSerializer::LoadVector(inf, Biases[i]);
+	}
+
+	inf.close();
 }
 
 void Network::Train()
@@ -145,8 +174,7 @@ void Network::NormalInitialization()
 
 int Network::Evaluate()
 {
-	// this is a test put two loops into one method
-	std::vector<int> predictions;
+	int goodResult = 0;
 	for (int i = 0; i < std::get<0>(TestData).size(); i++)
 	{
 		// Todo call function to convert opencv mat to eigen vec
@@ -165,13 +193,8 @@ int Network::Evaluate()
 				maxIndex = v;
 			}
 		}
-		predictions.push_back(maxIndex);
-	}
 
-	int goodResult = 0;
-	for (int i = 0; i < std::get<0>(TestData).size(); i++)
-	{
-		if (std::get<1>(TestData)[i] == predictions[i])
+		if (std::get<1>(TestData)[i] == maxIndex)
 		{
 			goodResult++;
 		}

@@ -43,12 +43,13 @@ private:
 	std::tuple<std::vector<cv::Mat>, std::vector<int>> TrainData;
 	std::tuple<std::vector<cv::Mat>, std::vector<int>> TestData;
 
-	Eigen::IOFormat CleanFmt;
-
 	Optimizer _Optimizer;
 	Loss _Loss;
 	int Epoch;
 	int BatchSize;
 	float LearningRate;
+
+	// other
+	Eigen::IOFormat CleanFmt;
 };
 
