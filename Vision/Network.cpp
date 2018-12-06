@@ -1,6 +1,15 @@
 #include "Network.h"
 
 
+template<typename T>
+std::vector<T> slice(std::vector<T> const &v, int m, int n)
+{
+	auto first = v.cbegin() + m;
+	auto last = v.cbegin() + n + 1;
+
+	std::vector<T> vec(first, last);
+	return vec;
+}
 
 Network::Network()
 {
@@ -40,6 +49,9 @@ void Network::Fit(std::tuple<std::vector<cv::Mat>, std::vector<int>> train, std:
 {
 	TrainData = train;
 	TestData = test;
+
+	std::get<0>(TestData) = slice(std::get<0>(TrainData), 0, 2000);
+	std::get<1>(TestData) = slice(std::get<1>(TrainData), 0, 2000);
 }
 
 void Network::Hyperparameter(int epoch, int batchSize, float learningRate)
@@ -55,16 +67,6 @@ void Network::SaveWeights(std::string filename)
 
 void Network::LoadWeights(std::string filename)
 {
-}
-
-template<typename T>
-std::vector<T> slice(std::vector<T> const &v, int m, int n)
-{
-	auto first = v.cbegin() + m;
-	auto last = v.cbegin() + n + 1;
-
-	std::vector<T> vec(first, last);
-	return vec;
 }
 
 void Network::Train()
