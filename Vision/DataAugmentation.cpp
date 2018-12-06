@@ -1,9 +1,9 @@
 #include "DataAugmentation.h"
 
 // Les translations et blur sont trop intense. Elle doit etre fait selon la dimension de l'image et non hardcodé
-void DataAugmentation::GetAugmentedFrame(cv::Mat &input)
+void DataAugmentation::GetAugmentedFrame(cv::Mat &input, bool rotate)
 {
-	AugmentationType _transformation = (AugmentationType)(rand() % PERSPECTIVE);
+	AugmentationType _transformation = rotate ? (AugmentationType)(rand() % PERSPECTIVE) : (AugmentationType)(rand() % ROTATION);
 	switch (_transformation) {
 	case (DISTORTION):
 		Distortion(input);
@@ -38,7 +38,7 @@ void DataAugmentation::GetAugmentedFrame(cv::Mat &input)
 void DataAugmentation::Distortion(cv::Mat &input)
 {
 	double sigma = 0.75;
-	double alpha = 0.25;
+	double alpha = 0.5;
 	bool bNorm = false;
 
 	cv::Mat dx(input.size(), CV_64FC1);
@@ -92,8 +92,8 @@ void DataAugmentation::Distortion(cv::Mat &input)
 
 void DataAugmentation::Translate(cv::Mat &input)
 {
-	float offsetX = rand() % 160 - 80;
-	float offsetY = rand() % 160 - 80;
+	float offsetX = rand() % input.rows*0.05 - (input.rows*0.05/2);
+	float offsetY = rand() % input.cols*0.05 - (input.cols*0.05 / 2);
 	cv::Mat trans_mat = (cv::Mat_<double>(2, 3) << 1, 0, offsetX, 0, 1, offsetY);
 	cv::warpAffine(input, input, trans_mat, input.size());
 }
@@ -124,12 +124,12 @@ void DataAugmentation::SaltNPepper(cv::Mat &input)
 
 void DataAugmentation::Noise(cv::Mat &input)
 {
-	cv::blur(input, input, cv::Size(10, 10));
+	cv::blur(input, input, cv::Size(5, 5));
 }
 
 void DataAugmentation::Lightning(cv::Mat &input)
 {
-	input.convertTo(input, -1, 2.2, 50);
+	input.convertTo(input, 1, 40, 40);
 }
 
 void DataAugmentation::Perspective(cv::Mat &input)
@@ -147,10 +147,10 @@ void DataAugmentation::Perspective(cv::Mat &input)
 
 	// The 4 points that select quadilateral on the input , from top-left in clockwise order
 	// These four pts are the sides of the rect box used as input 
-	inputQuad[0] = cv::Point2f(-30, -60);
-	inputQuad[1] = cv::Point2f(input.cols + 50, -50);
-	inputQuad[2] = cv::Point2f(input.cols + 100, input.rows + 50);
-	inputQuad[3] = cv::Point2f(-50, input.rows + 50);
+	inputQuad[0] = cv::Point2f(-7, -15);
+	inputQuad[1] = cv::Point2f(input.cols + 12, -12);
+	inputQuad[2] = cv::Point2f(input.cols + 25, input.rows + 12);
+	inputQuad[3] = cv::Point2f(-12, input.rows + 12);
 	// The 4 points where the mapping is to be done , from top-left in clockwise order
 	outputQuad[0] = cv::Point2f(0, 0);
 	outputQuad[1] = cv::Point2f(input.cols - 1, 0);

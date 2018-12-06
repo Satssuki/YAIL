@@ -10,12 +10,12 @@
 enum AugmentationType {
 	DISTORTION,
 	TRANSLATION,
-	ROTATION,
 	FLIPPING,
 	NOISE,
 	PEPPER_AND_SALT,
 	LIGHTNING,
 	PERSPECTIVE,
+	ROTATION,
 };
 
 enum Interpolation {
@@ -27,7 +27,7 @@ class DataAugmentation
 {
 
 public:
-	static void GetAugmentedFrame(cv::Mat &input);
+	static void GetAugmentedFrame(cv::Mat &input, bool rotate = true);
 private:
 
 	// Types of transformations
