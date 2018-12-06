@@ -1,9 +1,9 @@
 #include "DataAugmentation.h"
 
 // Les translations et blur sont trop intense. Elle doit etre fait selon la dimension de l'image et non hardcodé
-void DataAugmentation::GetAugmentedFrame(cv::Mat &input, bool rotate)
+void DataAugmentation::GetAugmentedFrame(cv::Mat &input, bool flip)
 {
-	AugmentationType _transformation = rotate ? (AugmentationType)(rand() % PERSPECTIVE) : (AugmentationType)(rand() % ROTATION);
+	AugmentationType _transformation = flip ? (AugmentationType)(rand() % FLIPPING + 1) : (AugmentationType)(rand() % PERSPECTIVE + 1);
 	switch (_transformation) {
 	case (DISTORTION):
 		Distortion(input);
@@ -101,7 +101,7 @@ void DataAugmentation::Translate(cv::Mat &input)
 void DataAugmentation::Rotate(cv::Mat &input)
 {
     cv:: Point2f src_center(input.cols / 2.0F, input.rows / 2.0F);
-	cv::Mat rot_mat = getRotationMatrix2D(src_center, rand() % 180, 1.0);
+	cv::Mat rot_mat = getRotationMatrix2D(src_center, rand() % 30 - 15, 1.0);
 	cv::warpAffine(input, input, rot_mat, input.size());
 }
 
