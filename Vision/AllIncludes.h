@@ -20,6 +20,7 @@
 #include <chrono>    
 #include <string>
 #include <time.h>
+#include <iomanip>
 
 // our classes
 #include "GuessTest.h"

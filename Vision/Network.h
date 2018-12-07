@@ -30,7 +30,7 @@ public:
 
 private:
 	void NormalInitialization();
-	int Evaluate();
+	std::tuple <int, float> Evaluate();
 	void UpdateBatch(std::tuple < std::vector<cv::Mat>, std::vector<int>> batch);
 	std::tuple < std::vector < Eigen::MatrixXf>, std::vector<Eigen::VectorXf> > BackPropagation(Eigen::VectorXf image, int label);
 	Eigen::VectorXf Forward(Eigen::VectorXf input);

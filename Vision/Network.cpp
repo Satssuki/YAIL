@@ -127,8 +127,10 @@ void Network::Train()
 
 			if (b % 100 == 0) { std::cout << "\rBatch " << b << " / " << totalBatches; }
 		}
+		auto evaluation = Evaluate();
 		std::cout << "\r                     ";
-		std::cout << "\rEpoch " << e << " : " + std::to_string(Evaluate()) << " / " << std::to_string(std::get<0>(TestData).size()) << std::endl;
+		std::cout << std::setprecision(2);
+		std::cout << "\rEpoch " << e << " : " + std::to_string(std::get<0>(evaluation)) << " / " << std::get<0>(TestData).size() << " Loss: " << std::to_string(std::get<1>(evaluation)) << std::endl;
 	}
 	std::cout << "Training completed" << std::endl;
 }
@@ -186,9 +188,11 @@ void Network::NormalInitialization()
 	std::cout << "Initialization finished" << std::endl;
 }
 
-int Network::Evaluate()
+std::tuple <int, float> Network::Evaluate()
 {
 	int goodResult = 0;
+	float sumError = 0;
+
 	for (int i = 0; i < std::get<0>(TestData).size(); i++)
 	{
 		// Todo call function to convert opencv mat to eigen vec
@@ -208,13 +212,21 @@ int Network::Evaluate()
 			}
 		}
 
+		float error = Function::ErrorFunction(_Loss, ConvertLabel2LastLayer(std::get<1>(TestData)[i]), L).sum();
+		sumError += error;
+
 		if (std::get<1>(TestData)[i] == maxIndex)
 		{
 			goodResult++;
 		}
-	}
 
-	return goodResult;
+		std::cout << "\r                                               ";
+		std::cout << std::setprecision(2);
+		std::cout << "\rEvaluation.  Acc: " + std::to_string(goodResult) << " / " << std::to_string(i) << " Loss: " << std::to_string(error);
+	}
+	sumError = sumError / std::get<0>(TestData).size();
+	
+	return { goodResult, sumError };
 }
 
 void Network::UpdateBatch(std::tuple<std::vector<cv::Mat>, std::vector<int>> batch)
@@ -269,7 +281,7 @@ std::tuple<std::vector<Eigen::MatrixXf>, std::vector<Eigen::VectorXf>> Network::
 	std::vector< Eigen::MatrixXf> deltaWeights;
 	std::vector< Eigen::VectorXf> deltaBiases;
 
-	Eigen::VectorXf costPrime = Function::ErrorFunction(_Loss, ConvertLabel2LastLayer(label), activations.back());
+	Eigen::VectorXf costPrime = Function::ErrorFunctionPrime(_Loss, ConvertLabel2LastLayer(label), activations.back());
 	Eigen::VectorXf sigmoidPrime = Function::ActivationFunctionPrime(Layers.back()->_Activation, zs.back());
 	Eigen::VectorXf delta = costPrime.array() * sigmoidPrime.array();
 
