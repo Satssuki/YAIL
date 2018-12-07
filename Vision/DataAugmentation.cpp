@@ -137,7 +137,6 @@ void DataAugmentation::Noise(cv::Mat &input)
 void DataAugmentation::Lightning(cv::Mat &input)
 {
  	input.convertTo(input, 1.0f, 40.0f, 40.0f);
-	std::cout << "light" << std::endl;
 }
 
 void DataAugmentation::Perspective(cv::Mat &input)

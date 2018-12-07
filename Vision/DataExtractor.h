@@ -4,7 +4,8 @@ class DataExtractor
 {
 public:
 	static std::vector<cv::Mat> ExtractCharacters(cv::Mat &input);
+	static void StepCharacter(cv::Mat &input);
 private:
-	std::vector<cv::Mat> characters;
+	static std::vector<cv::Mat> characters;
 };
 
