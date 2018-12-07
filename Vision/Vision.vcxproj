@@ -163,7 +163,7 @@
     <ClCompile Include="Dense.cpp" />
     <ClCompile Include="EigenSerializer.cpp" />
     <ClCompile Include="Function.cpp" />
-    <ClCompile Include="GuessTest.cpp" />
+    <ClCompile Include="Guess.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Layer.cpp" />
     <ClCompile Include="MNIST.cpp" />
@@ -179,7 +179,7 @@
     <ClInclude Include="Dense.h" />
     <ClInclude Include="EigenSerializer.h" />
     <ClInclude Include="Function.h" />
-    <ClInclude Include="GuessTest.h" />
+    <ClInclude Include="Guess.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Layer.h" />
     <ClInclude Include="Loss.h" />

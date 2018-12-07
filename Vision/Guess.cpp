@@ -1,18 +1,18 @@
-#include "GuessTest.h"
+#include "Guess.h"
 
 
 
-GuessTest::GuessTest()
+Guess::Guess()
 {
 	
 }
 
 
-GuessTest::~GuessTest()
+Guess::~Guess()
 {
 }
 
-void GuessTest::StartTest(std::vector<cv::Mat>* images, std::vector<int>* labels)
+void Guess::StartTest(std::vector<cv::Mat>* images, std::vector<int>* labels)
 {
 	std::cout << "Try to guess if the image contains a cat (press 0) or a dog (press 1)." << std::endl;
 	std::cout << "Enter the number of images you want to test" << std::endl;
@@ -43,4 +43,28 @@ void GuessTest::StartTest(std::vector<cv::Mat>* images, std::vector<int>* labels
 	}
 
 	std::cout << "You had " << goodAnswer << "/" << totalImages << " good answers!" << std::endl;
+}
+
+void Guess::Print(int label, int result, cv::Mat image)
+{
+	cv::Mat resized;
+	resize(image, resized, cv::Size(200, 200));
+	cvtColor(resized, resized, CV_GRAY2BGR);
+
+	// tried to make them static
+	cv::Scalar Red = cv::Scalar(0, 0, 1);
+	cv::Scalar Green = cv::Scalar(0, 1, 0);
+
+	int top = (int)(0.05*resized.rows), bottom = (int)(0.05*resized.rows);
+	int left = (int)(0.05*resized.cols), right = (int)(0.05*resized.cols);
+
+	if(label == result)
+		copyMakeBorder(resized, resized, top, bottom, left, right, cv::BORDER_CONSTANT, Green);
+	else
+		copyMakeBorder(resized, resized, top, bottom, left, right, cv::BORDER_CONSTANT, Red);
+
+	std::cout << " Prediction: " << result << " Label: " << label << std::endl;
+
+	imshow("Prediction", resized);
+	//cv::waitKey(0);
 }
