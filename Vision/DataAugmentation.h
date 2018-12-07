@@ -28,6 +28,7 @@ class DataAugmentation
 
 public:
 	static void GetAugmentedFrame(cv::Mat &input, bool rotate);
+	static void Rotate(cv::Mat &input, int angle);
 private:
 
 	// Types of transformations
