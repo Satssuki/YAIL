@@ -13,9 +13,9 @@ enum AugmentationType {
 	NOISE,
 	ROTATION,
 	PEPPER_AND_SALT,
-	LIGHTNING,
 	PERSPECTIVE,
 	FLIPPING,
+	LIGHTNING,
 };
 
 enum Interpolation {
