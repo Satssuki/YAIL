@@ -159,6 +159,7 @@
   <ItemGroup>
     <ClCompile Include="cv2eigen.cpp" />
     <ClCompile Include="DataAugmentation.cpp" />
+    <ClCompile Include="DataExtractor.cpp" />
     <ClCompile Include="DataLoader.cpp" />
     <ClCompile Include="Dense.cpp" />
     <ClCompile Include="EigenSerializer.cpp" />
@@ -175,6 +176,7 @@
     <ClInclude Include="AllIncludes.h" />
     <ClInclude Include="cv2eigen.h" />
     <ClInclude Include="DataAugmentation.h" />
+    <ClInclude Include="DataExtractor.h" />
     <ClInclude Include="DataLoader.h" />
     <ClInclude Include="Dense.h" />
     <ClInclude Include="EigenSerializer.h" />

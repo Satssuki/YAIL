@@ -78,6 +78,9 @@
     <ClCompile Include="Guess.cpp">
       <Filter>Fichiers sources\Test</Filter>
     </ClCompile>
+    <ClCompile Include="DataExtractor.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AllIncludes.h">
@@ -124,6 +127,9 @@
     </ClInclude>
     <ClInclude Include="Guess.h">
       <Filter>Fichiers d%27en-tête\Test</Filter>
+    </ClInclude>
+    <ClInclude Include="DataExtractor.h">
+      <Filter>Fichiers d%27en-tête\Data</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
