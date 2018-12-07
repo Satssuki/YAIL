@@ -33,7 +33,14 @@ void DataAugmentation::GetAugmentedFrame(cv::Mat &input, bool flip)
 		return;
 	}
 
-} 
+}
+void DataAugmentation::Rotate(cv::Mat & input, int angle)
+{
+	cv::Point2f src_center(input.cols / 2.0F, input.rows / 2.0F);
+	cv::Mat rot_mat = getRotationMatrix2D(src_center, rand() % angle - angle/2, 1.0);
+	cv::warpAffine(input, input, rot_mat, input.size());
+}
+
 
 void DataAugmentation::Distortion(cv::Mat &input)
 {
