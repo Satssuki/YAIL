@@ -39,7 +39,7 @@ std::vector<cv::Mat> DataExtractor::StepCharacter(cv::Mat & input) {
 
 	findContours(gray, contours, hierarchy, CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE);
 	std::sort(contours.begin(), contours.end(), contour_sorter());
-	int padding = 3;
+	int padding = 5;
 	for (int i = 0; i < contours.size(); i = hierarchy[i][0])
 	{
 		cv::Mat charac;
