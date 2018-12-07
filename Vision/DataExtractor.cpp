@@ -2,6 +2,7 @@
 
 std::vector<cv::Mat> DataExtractor::ExtractCharacters(cv::Mat & input) {
 	cv::Mat temp, gray;
+	std::vector<cv::Mat> resultArray;
 	cvtColor(input, gray, CV_BGR2GRAY);
 	gray = gray > 127;
 
@@ -20,16 +21,16 @@ std::vector<cv::Mat> DataExtractor::ExtractCharacters(cv::Mat & input) {
 				minRect.y = 0;
 				temp = input(minRect);
 				temp = cv::Scalar(255, 255, 255);
-				StepCharacter(input);
-				cv::waitKey(0);
+				resultArray = StepCharacter(input);
 			}
 		}
 	}
-	return std::vector<cv::Mat>();
+	return resultArray;
 }
 
-void DataExtractor::StepCharacter(cv::Mat & input) {
-	cv::Mat gray, test;
+std::vector<cv::Mat> DataExtractor::StepCharacter(cv::Mat & input) {
+	cv::Mat gray;
+	std::vector<cv::Mat> characArray;
 	cvtColor(input, gray, CV_BGR2GRAY);
 	threshold(gray, gray, 200, 255, cv::THRESH_BINARY_INV);
 
@@ -46,9 +47,7 @@ void DataExtractor::StepCharacter(cv::Mat & input) {
 		rectangle(input, cv::Point(r.x - padding, r.y - padding), cv::Point(r.x + r.width + padding, r.y + r.height + padding), Scalar(0, 0, 255), 1, 8, 0);
 		input(cv::Rect(cv::Point(r.x - padding, r.y - padding), cv::Point(r.x + r.width + padding, r.y + r.height + padding))).copyTo(charac);
 		cv::resize(charac, charac, cv::Size(28, 28));
-		cv::imshow("Test", charac);
-		cv::waitKey(0);
+		characArray.push_back(charac);
 	}
-	imshow("result", input);
-	cv::waitKey(0);
+	return characArray;
 }

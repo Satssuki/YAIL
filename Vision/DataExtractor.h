@@ -8,9 +8,8 @@ class DataExtractor
 {
 public:
 	static std::vector<cv::Mat> ExtractCharacters(cv::Mat &input);
-	static void StepCharacter(cv::Mat &input);
+	static std::vector<cv::Mat> StepCharacter(cv::Mat &input);
 private:
-
 
 	struct contour_sorter // 'less' for contours
 	{
