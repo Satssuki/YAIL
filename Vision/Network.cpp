@@ -132,17 +132,15 @@ void Network::Train()
 		}
 		auto evaluation = Evaluate();
 		std::cout << "\r                     ";
-		std::cout << std::fixed << std::setprecision(2);
-		std::cout << "\rEpoch " << e << ". Acc : " + std::to_string(std::get<0>(evaluation)) << " / " << std::get<0>(TestData).size() << " Loss: " << std::to_string(std::get<1>(evaluation)) << std::endl;
+		std::cout << "\rEpoch " << e << ". Acc : " + std::to_string(std::get<0>(evaluation)) << " / " << std::get<0>(TestData).size() << " Loss: " << std::setprecision(2) << std::get<1>(evaluation) << std::endl;
 	}
 
 	clock_t end = clock();
 	clock_t ticks = end - start;
 	double secs = ticks / (double)CLOCKS_PER_SEC;
-	float hour = fmod(secs / 3600, 60);
 	float min =	fmod(secs / 60, 60);
 	
-	std::cout << "Training completed. Took " << hour << "h:" << min << "min" << std::endl;
+	std::cout << "Training completed. Took " << min << " min" << std::endl;
 }
 
 int Network::Predict(cv::Mat image)
@@ -231,8 +229,7 @@ std::tuple <int, float> Network::Evaluate()
 		}
 
 		std::cout << "\r                                               ";
-		std::cout << std::fixed << std::setprecision(2);
-		std::cout << "\rEvaluation.  Acc: " + std::to_string(goodResult) << " / " << std::to_string(i) << " Loss: " << std::to_string(error);
+		std::cout << "\rEvaluation.  Acc: " + std::to_string(goodResult) << " / " << std::to_string(i) << " Loss: " << std::setprecision(2) << error;
 	}
 	sumError = sumError / std::get<0>(TestData).size();
 	
