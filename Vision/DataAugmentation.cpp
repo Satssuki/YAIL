@@ -3,7 +3,7 @@
 // Les translations et blur sont trop intense. Elle doit etre fait selon la dimension de l'image et non hardcodé
 void DataAugmentation::GetAugmentedFrame(cv::Mat &input, bool flip)
 {
-	AugmentationType _transformation = flip ? (AugmentationType)(rand() % FLIPPING + 1) : (AugmentationType)(rand() % PERSPECTIVE + 1);
+	AugmentationType _transformation = flip ? (AugmentationType)(rand() % LIGHTNING + 1) : (AugmentationType)(rand() % PERSPECTIVE + 1);
 	switch (_transformation) {
 	case (DISTORTION):
 		Distortion(input);
@@ -129,8 +129,8 @@ void DataAugmentation::Noise(cv::Mat &input)
 
 void DataAugmentation::Lightning(cv::Mat &input)
 {
-	input.convertTo(input, 1, 40, 40);
-	input.convertTo(input, CV_32FC1);
+ 	input.convertTo(input, 1.0f, 40.0f, 40.0f);
+	std::cout << "light" << std::endl;
 }
 
 void DataAugmentation::Perspective(cv::Mat &input)
