@@ -185,12 +185,14 @@ void Network::NormalInitialization()
 
 	std::default_random_engine generator;
 	std::normal_distribution<float> distribution(0.0, 1.0);
-	auto normal = [&](float) {return distribution(generator); };
+	auto normalBias = [&](float) {return distribution(generator); };
 
 	for(int i = 1; i < Layers.size(); i++) 
 	{
-		Biases.push_back(Eigen::VectorXf::NullaryExpr(Layers[i]->Size(), normal));		
-		Weights.push_back(Eigen::MatrixXf::NullaryExpr(Layers[i]->Size(),Layers[i - 1]->Size(), normal));
+		Biases.push_back(Eigen::VectorXf::NullaryExpr(Layers[i]->Size(), normalBias));	
+
+		auto normalWeight = [&](float) {return distribution(generator)/sqrt(Layers[i - 1]->Size()); };
+		Weights.push_back(Eigen::MatrixXf::NullaryExpr(Layers[i]->Size(),Layers[i - 1]->Size(), normalWeight));
 	}
 
 	std::cout << "Initialization finished" << std::endl;
