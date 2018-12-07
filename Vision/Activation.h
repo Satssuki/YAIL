@@ -1,3 +1,3 @@
 #pragma once
 
-enum Activation { sigmoid };
+enum Activation { sigmoid, leakyRelu};

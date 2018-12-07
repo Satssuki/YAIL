@@ -8,7 +8,8 @@ Eigen::VectorXf Function::ActivationFunction(Activation activation, Eigen::Vecto
 	case sigmoid:
 		src = Sigmoid(src);
 		break;
-
+	case leakyRelu:
+		src = LeakyRelu(src);
 	default:
 			break;
 	}
@@ -50,7 +51,8 @@ Eigen::VectorXf Function::ActivationFunctionPrime(Activation activation, Eigen::
 	case sigmoid:
 		src = SigmoidPrime(src);
 		break;
-
+	case leakyRelu : 
+		src = LeakyReluPrime(src);
 	default:
 		break;
 	}
@@ -77,6 +79,51 @@ Eigen::VectorXf Function::MeanSquaredErrorPrime(Eigen::VectorXf y, Eigen::Vector
 {
 	return output.array() - y.array();
 }
+
+Eigen::VectorXf Function::LeakyRelu(Eigen::VectorXf v)
+{
+
+	Eigen::VectorXf activation(v.rows(), v.cols());
+	//If the vector is 2d
+	for (int i = 0; i < v.rows(); i++)
+	{
+		for (int j = 0; j < v.cols(); j++) 
+		{
+			if (v(i, j) <= 0.0f) 
+			{
+				activation(i, j) = v(i,j) * 0.05;
+			}
+			else {
+				activation(i, j) = v(i,j);
+			}
+		}
+	}
+	return activation;
+}
+
+Eigen::VectorXf Function::LeakyReluPrime(Eigen::VectorXf v)
+{
+
+	Eigen::VectorXf activationPrime(v.rows(), v.cols());
+	//If the vector is 2d
+	for (int i = 0; i < v.rows(); i++)
+	{
+		for (int j = 0; j < v.cols(); j++)
+		{
+			if (v(i, j) <= 0.0f)
+			{
+				activationPrime(i, j) = (0.05);
+			}
+			else {
+				activationPrime(i, j) = (1.0);
+			}
+		}
+	}
+
+	return activationPrime;
+}
+
+
 
 
 

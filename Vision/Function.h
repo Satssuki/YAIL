@@ -2,6 +2,7 @@
 #include <Eigen/Dense>
 #include "Activation.h"
 #include "Loss.h"
+#include <iostream>
 
 class Function
 {
@@ -23,5 +24,18 @@ private:
 
 	// loss prime
 	static Eigen::VectorXf MeanSquaredErrorPrime(Eigen::VectorXf y, Eigen::VectorXf output);
+
+
+	//Relu
+	static Eigen::VectorXf LeakyRelu(Eigen::VectorXf src);
+
+	//Relu prime
+	static Eigen::VectorXf LeakyReluPrime(Eigen::VectorXf src);
+
+
+	//SoftMax
+	static Eigen::VectorXf SoftMax(Eigen::VectorXf src);
+
+	static Eigen::VectorXf SoftMaxPrime(Eigen::VectorXf src);
 };
 
