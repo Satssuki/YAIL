@@ -102,7 +102,7 @@ Eigen::VectorXf Function::MeanSquaredErrorPrime(Eigen::VectorXf y, Eigen::Vector
 	return output.array() - y.array();
 }
 
-<<<<<<< HEAD
+
 Eigen::VectorXf Function::LeakyRelu(Eigen::VectorXf v)
 {
 
@@ -147,13 +147,11 @@ Eigen::VectorXf Function::LeakyReluPrime(Eigen::VectorXf v)
 }
 
 
-
-=======
 Eigen::VectorXf Function::CrossEntropyErrorPrime(Eigen::VectorXf y, Eigen::VectorXf output)
 {
 	return output.array() - y.array();
 }
 
->>>>>>> 54331490f66ba540fe6b3620c1414bbb2da82bcb
+
 
 

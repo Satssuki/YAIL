@@ -300,17 +300,11 @@ std::tuple<std::vector<Eigen::MatrixXf>, std::vector<Eigen::VectorXf>> Network::
 	std::vector< Eigen::MatrixXf> deltaWeights;
 	std::vector< Eigen::VectorXf> deltaBiases;
 
-<<<<<<< HEAD
-	Eigen::VectorXf costPrime = Function::ErrorFunctionPrime(_Loss, ConvertLabel2LastLayer(label), activations.back());
-	Eigen::VectorXf activationPrime = Function::ActivationFunctionPrime(Layers.back()->_Activation, zs.back());
-	Eigen::VectorXf delta = costPrime.array() * activationPrime.array();
-=======
 	// this needs to be more generic lol
 	/*Eigen::VectorXf costPrime = Function::ErrorFunctionPrime(_Loss, ConvertLabel2LastLayer(label), activations.back());
 	Eigen::VectorXf sigmoidPrime = Function::ActivationFunctionPrime(Layers.back()->_Activation, zs.back());
 	Eigen::VectorXf delta = costPrime.array() * sigmoidPrime.array();*/
 	Eigen::VectorXf delta = Function::DeltaLastLayer(_Loss, ConvertLabel2LastLayer(label), activations.back(), zs.back());
->>>>>>> 54331490f66ba540fe6b3620c1414bbb2da82bcb
 
 	deltaBiases.push_back(delta);
 	deltaWeights.push_back(delta * activations[activations.size() - 2].transpose());

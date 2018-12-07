@@ -26,8 +26,6 @@ private:
 
 	// loss prime
 	static Eigen::VectorXf MeanSquaredErrorPrime(Eigen::VectorXf y, Eigen::VectorXf output);
-<<<<<<< HEAD
-
 
 	//Relu
 	static Eigen::VectorXf LeakyRelu(Eigen::VectorXf src);
@@ -40,8 +38,8 @@ private:
 	static Eigen::VectorXf SoftMax(Eigen::VectorXf src);
 
 	static Eigen::VectorXf SoftMaxPrime(Eigen::VectorXf src);
-=======
+
 	static Eigen::VectorXf CrossEntropyErrorPrime(Eigen::VectorXf y, Eigen::VectorXf output);
->>>>>>> 54331490f66ba540fe6b3620c1414bbb2da82bcb
+
 };
 
