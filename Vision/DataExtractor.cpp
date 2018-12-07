@@ -39,13 +39,13 @@ std::vector<cv::Mat> DataExtractor::StepCharacter(cv::Mat & input) {
 
 	findContours(gray, contours, hierarchy, CV_RETR_CCOMP, CV_CHAIN_APPROX_SIMPLE);
 	std::sort(contours.begin(), contours.end(), contour_sorter());
-	int padding = 3;
+	int padding = 5;
 	for (int i = 0; i < contours.size(); i = hierarchy[i][0])
 	{
 		cv::Mat charac;
 		cv::Rect r = boundingRect(contours[i]);
 		rectangle(input, cv::Point(r.x - padding, r.y - padding), cv::Point(r.x + r.width + padding, r.y + r.height + padding), Scalar(0, 0, 255), 1, 8, 0);
-		input(cv::Rect(cv::Point(r.x - padding, r.y - padding), cv::Point(r.x + r.width + padding, r.y + r.height + padding))).copyTo(charac);
+		gray(cv::Rect(cv::Point(r.x - padding, r.y - padding), cv::Point(r.x + r.width + padding, r.y + r.height + padding))).copyTo(charac);
 		cv::resize(charac, charac, cv::Size(28, 28));
 		characArray.push_back(charac);
 	}
