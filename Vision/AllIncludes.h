@@ -22,6 +22,7 @@
 #include <string>
 #include <time.h>
 #include <iomanip>
+#include <math.h>   
 
 // our classes
 #include "Guess.h"
