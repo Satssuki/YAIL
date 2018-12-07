@@ -41,7 +41,7 @@ void MNIST::ReadImages(std::string filename, std::vector<cv::Mat>& vec)
 				}
 			}
 			cv::bitwise_not(tp, tp);
-			tp.convertTo(tp, CV_32FC3, 1.f / 255);
+			tp.convertTo(tp, CV_32FC1, 1.f / 255);
 			vec.push_back(tp);
 		}
 	}

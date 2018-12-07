@@ -104,6 +104,11 @@ void Network::Train()
 
 	for (int e = 0; e < Epoch; e++)
 	{
+		//// to delete
+		//unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+		//shuffle(std::get<0>(TrainData).begin(), std::get<0>(TrainData).end(), std::default_random_engine(seed));
+		//shuffle(std::get<1>(TrainData).begin(), std::get<1>(TrainData).end(), std::default_random_engine(seed));
+
 		// maybe should shuffle training data each time lol
 		int trainDataSize = std::get<0>(TrainData).size();
 		int totalBatches = ceil(trainDataSize / (float)BatchSize);
@@ -253,7 +258,13 @@ void Network::UpdateBatch(std::tuple<std::vector<cv::Mat>, std::vector<int>> bat
 	for (int i = 0; i < currentBatchSize; i++)
 	{
 		cv::Mat imageCV = std::get<0>(batch)[i];
-			
+		
+		//// change place
+		//if (i % 4 == 0) 
+		//{
+		//	DataAugmentation::Rotate(imageCV, 30);
+		//}
+
 		int label = std::get<1>(batch)[i];
 		auto errorWeightsBiases = BackPropagation(cv2eigen::Convert(imageCV), label);
 
@@ -289,9 +300,17 @@ std::tuple<std::vector<Eigen::MatrixXf>, std::vector<Eigen::VectorXf>> Network::
 	std::vector< Eigen::MatrixXf> deltaWeights;
 	std::vector< Eigen::VectorXf> deltaBiases;
 
+<<<<<<< HEAD
 	Eigen::VectorXf costPrime = Function::ErrorFunctionPrime(_Loss, ConvertLabel2LastLayer(label), activations.back());
 	Eigen::VectorXf activationPrime = Function::ActivationFunctionPrime(Layers.back()->_Activation, zs.back());
 	Eigen::VectorXf delta = costPrime.array() * activationPrime.array();
+=======
+	// this needs to be more generic lol
+	/*Eigen::VectorXf costPrime = Function::ErrorFunctionPrime(_Loss, ConvertLabel2LastLayer(label), activations.back());
+	Eigen::VectorXf sigmoidPrime = Function::ActivationFunctionPrime(Layers.back()->_Activation, zs.back());
+	Eigen::VectorXf delta = costPrime.array() * sigmoidPrime.array();*/
+	Eigen::VectorXf delta = Function::DeltaLastLayer(_Loss, ConvertLabel2LastLayer(label), activations.back(), zs.back());
+>>>>>>> 54331490f66ba540fe6b3620c1414bbb2da82bcb
 
 	deltaBiases.push_back(delta);
 	deltaWeights.push_back(delta * activations[activations.size() - 2].transpose());

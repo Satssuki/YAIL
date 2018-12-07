@@ -1,12 +1,16 @@
 #pragma once
 #include "AllIncludes.h"
 
-class GuessTest
+class Guess
 {
 public:
-	GuessTest();
-	~GuessTest();
+	Guess();
+	~Guess();
 
 	void StartTest(std::vector<cv::Mat>* images, std::vector<int>* labels);
+	static void Print(int label, int result, cv::Mat image);
+
+private:
+
 };
 

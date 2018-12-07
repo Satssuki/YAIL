@@ -4,6 +4,7 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#include "opencv2/imgproc/imgproc.hpp"
 
 // eigen
 #include <iostream>
@@ -21,9 +22,10 @@
 #include <string>
 #include <time.h>
 #include <iomanip>
+#include <math.h>   
 
 // our classes
-#include "GuessTest.h"
+#include "Guess.h"
 
 // data
 #include "DataLoader.h"
@@ -31,7 +33,7 @@
 #include "MNIST.h"
 #include "EigenSerializer.h"
 #include "cv2eigen.h"
-
+#include "DataExtractor.h"
 #include "Network.h"
 
 //Static function

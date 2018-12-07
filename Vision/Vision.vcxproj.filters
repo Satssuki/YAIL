@@ -60,9 +60,6 @@
     <ClCompile Include="DataLoader.cpp">
       <Filter>Fichiers sources\Data</Filter>
     </ClCompile>
-    <ClCompile Include="GuessTest.cpp">
-      <Filter>Fichiers sources\Test</Filter>
-    </ClCompile>
     <ClCompile Include="Input.cpp">
       <Filter>Fichiers sources\Network\Layers</Filter>
     </ClCompile>
@@ -77,6 +74,12 @@
     </ClCompile>
     <ClCompile Include="cv2eigen.cpp">
       <Filter>Fichiers sources\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="Guess.cpp">
+      <Filter>Fichiers sources\Test</Filter>
+    </ClCompile>
+    <ClCompile Include="DataExtractor.cpp">
+      <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -97,9 +100,6 @@
     </ClInclude>
     <ClInclude Include="DataLoader.h">
       <Filter>Fichiers d%27en-tête\Data</Filter>
-    </ClInclude>
-    <ClInclude Include="GuessTest.h">
-      <Filter>Fichiers d%27en-tête\Test</Filter>
     </ClInclude>
     <ClInclude Include="Optimizer.h">
       <Filter>Fichiers d%27en-tête\Enum</Filter>
@@ -123,6 +123,12 @@
       <Filter>Fichiers d%27en-tête\Data</Filter>
     </ClInclude>
     <ClInclude Include="cv2eigen.h">
+      <Filter>Fichiers d%27en-tête\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Guess.h">
+      <Filter>Fichiers d%27en-tête\Test</Filter>
+    </ClInclude>
+    <ClInclude Include="DataExtractor.h">
       <Filter>Fichiers d%27en-tête\Data</Filter>
     </ClInclude>
   </ItemGroup>

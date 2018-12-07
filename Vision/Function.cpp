@@ -23,21 +23,25 @@ Eigen::VectorXf Function::ErrorFunction(Loss loss, Eigen::VectorXf y, Eigen::Vec
 	case mean_squared_error:
 		output = MeanSquaredError(y, output);
 		break;
-
+	case cross_entropy:
+		output = CrossEntropyError(y, output);
+		break;
 	default:
 		break;
 	}
 	return output;
 }
 
-Eigen::VectorXf Function::ErrorFunctionPrime(Loss loss, Eigen::VectorXf y, Eigen::VectorXf output)
+Eigen::VectorXf Function::DeltaLastLayer(Loss loss, Eigen::VectorXf y, Eigen::VectorXf output, Eigen::VectorXf z)
 {
 	switch (loss)
 	{
 	case mean_squared_error:
-		output = MeanSquaredErrorPrime(y, output);
+		output = MeanSquaredErrorPrime(y, output).array() * SigmoidPrime(z).array();
 		break;
-
+	case cross_entropy:
+		output = CrossEntropyErrorPrime(y, output);
+		break;
 	default:
 		break;
 	}
@@ -70,16 +74,35 @@ Eigen::VectorXf Function::MeanSquaredError(Eigen::VectorXf y, Eigen::VectorXf ou
 	return (y.array() - output.array()).pow(2) / 2.0;
 }
 
+Eigen::VectorXf Function::CrossEntropyError(Eigen::VectorXf y, Eigen::VectorXf output)
+{
+	//float verif =
+	Eigen::VectorXf crossEntropy = (-1 * y.array()) * log(output.array()) - (1 - y.array()) * log(1 - output.array());
+	
+	if (crossEntropy.hasNaN())
+	{
+		for (int i = 0; i < crossEntropy.rows(); i++)
+		{
+			if (isnan(crossEntropy(i)))
+				crossEntropy(i) = 0;
+		}
+	}
+
+	return crossEntropy;
+}
+
 Eigen::VectorXf Function::SigmoidPrime(Eigen::VectorXf src)
 {
 	return Sigmoid(src).array() * (1 - Sigmoid(src).array());
 }
 
+// add the rest of the code lol, en ce moment il est pas placé a la bonne place
 Eigen::VectorXf Function::MeanSquaredErrorPrime(Eigen::VectorXf y, Eigen::VectorXf output)
 {
 	return output.array() - y.array();
 }
 
+<<<<<<< HEAD
 Eigen::VectorXf Function::LeakyRelu(Eigen::VectorXf v)
 {
 
@@ -125,5 +148,12 @@ Eigen::VectorXf Function::LeakyReluPrime(Eigen::VectorXf v)
 
 
 
+=======
+Eigen::VectorXf Function::CrossEntropyErrorPrime(Eigen::VectorXf y, Eigen::VectorXf output)
+{
+	return output.array() - y.array();
+}
+
+>>>>>>> 54331490f66ba540fe6b3620c1414bbb2da82bcb
 
 
