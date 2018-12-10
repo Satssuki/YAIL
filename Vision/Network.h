@@ -17,7 +17,6 @@ public:
 	~Network();
 
 	void Add(Layer* layer);
-	void Compile(std::string optimizer = "sgd", std::string loss = "mse");
 	void Compile(Optimizer optimizer = stochastic_gradient_descent, Loss loss = mean_squared_error);
 	void Fit(std::tuple < std::vector<cv::Mat>, std::vector<int>> train, std::tuple < std::vector<cv::Mat>, std::vector<int>> test);
 	void Hyperparameter(int epoch, int batchSize, float learningRate);
@@ -26,7 +25,6 @@ public:
 	void Train();
 	int Predict(cv::Mat image);
 	void Summary();
-	void Plot();
 
 private:
 	void NormalInitialization();
@@ -34,7 +32,8 @@ private:
 	void UpdateBatch(std::tuple < std::vector<cv::Mat>, std::vector<int>> batch);
 	std::tuple < std::vector < Eigen::MatrixXf>, std::vector<Eigen::VectorXf> > BackPropagation(Eigen::VectorXf image, int label);
 	Eigen::VectorXf Forward(Eigen::VectorXf input);
-	Eigen::VectorXf ConvertLabel2LastLayer(int label);
+	Eigen::VectorXf VectorizeLabel(int label);
+	Eigen::VectorXf VectorizeImage(cv::Mat imageCV);
 
 	std::vector<Layer*> Layers;
 	std::vector<Eigen::VectorXf> Biases;

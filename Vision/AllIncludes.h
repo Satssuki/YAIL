@@ -32,7 +32,6 @@
 #include "DataAugmentation.h"
 #include "MNIST.h"
 #include "EigenSerializer.h"
-#include "cv2eigen.h"
 #include "DataExtractor.h"
 #include "Network.h"
 

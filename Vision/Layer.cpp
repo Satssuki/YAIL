@@ -4,11 +4,6 @@ Layer::Layer()
 {
 }
 
-Layer::Layer(int neurons, std::string activation)
-{
-	Neurons = neurons;
-}
-
 Layer::Layer(int neurons, Activation activation)
 {
 	Neurons = neurons;

@@ -76,7 +76,6 @@ Eigen::VectorXf Function::MeanSquaredError(Eigen::VectorXf y, Eigen::VectorXf ou
 
 Eigen::VectorXf Function::CrossEntropyError(Eigen::VectorXf y, Eigen::VectorXf output)
 {
-	//float verif =
 	Eigen::VectorXf crossEntropy = (-1 * y.array()) * log(output.array()) - (1 - y.array()) * log(1 - output.array());
 	
 	if (crossEntropy.hasNaN())
@@ -96,18 +95,15 @@ Eigen::VectorXf Function::SigmoidPrime(Eigen::VectorXf src)
 	return Sigmoid(src).array() * (1 - Sigmoid(src).array());
 }
 
-// add the rest of the code lol, en ce moment il est pas placé a la bonne place
 Eigen::VectorXf Function::MeanSquaredErrorPrime(Eigen::VectorXf y, Eigen::VectorXf output)
 {
 	return output.array() - y.array();
 }
 
-
 Eigen::VectorXf Function::LeakyRelu(Eigen::VectorXf v)
 {
 
 	Eigen::VectorXf activation(v.rows(), v.cols());
-	//If the vector is 2d
 	for (int i = 0; i < v.rows(); i++)
 	{
 		for (int j = 0; j < v.cols(); j++) 
@@ -126,9 +122,7 @@ Eigen::VectorXf Function::LeakyRelu(Eigen::VectorXf v)
 
 Eigen::VectorXf Function::LeakyReluPrime(Eigen::VectorXf v)
 {
-
 	Eigen::VectorXf activationPrime(v.rows(), v.cols());
-	//If the vector is 2d
 	for (int i = 0; i < v.rows(); i++)
 	{
 		for (int j = 0; j < v.cols(); j++)
