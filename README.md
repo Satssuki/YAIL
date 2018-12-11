@@ -14,6 +14,27 @@ If you are not familiar with multivariable calculus check some videos from one o
 - https://www.youtube.com/playlist?list=PLSQl0a2vh4HC5feHa6Rc5c0wbRTx56nF7 
 - https://www.youtube.com/playlist?list=PL4C4C8A7D06566F38
 
+# Features
+
+| Optimizer     | 
+| ------------- |
+| stochastic gradient descent |
+
+| Loss     | 
+| ------------- |
+| mean squared error |
+| cross entropy |
+
+| Activation |
+| ------------- |
+| sigmoid |
+| leaky relu |
+
+| Layer     | 
+| ------------- |
+| flatten |
+| dense |
+
 # Library 
 - [Eigen](http://eigen.tuxfamily.org/index.php?title=Main_Page) linear algebra 
 - [OpenCV](https://opencv.org/releases.html) quick installation [guide](https://github.com/pascal-canuel/VSOpenCV) on visual studio  
