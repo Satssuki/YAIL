@@ -1,7 +1,11 @@
+<p align="center"><b>YAIL (Yet another AI Library)</b> ⛵</p>
+
 # Goal
 The goal is to provide all beginners (like us) with the resources to build their first neural network from scratch.
 
 # Prerequisites
+I'd rather redirect you to some incredible resources that already exist than trying to re-explain everything. If you go through the links you should feel comfortable with the explanations into the code
+
 - 3B1B neural networks series: https://www.youtube.com/playlist?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi  
 - Michael Nielsen's book (best explanations found beginner): http://neuralnetworksanddeeplearning.com/
 - Book by Ian Goodfellow and Yoshua Bengio and Aaron Courville: http://www.deeplearningbook.org/
