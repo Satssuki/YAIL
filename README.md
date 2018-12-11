@@ -29,11 +29,16 @@ If you are not familiar with multivariable calculus check some videos from one o
 | ------------- |
 | sigmoid |
 | leaky relu |
+| *softmax* |
 
 | Layer     | 
 | ------------- |
 | flatten |
 | dense |
+| *conv* |
+| *max pool* |
+
+*Todo what's in italic*
 
 # Library 
 - [Eigen](http://eigen.tuxfamily.org/index.php?title=Main_Page) linear algebra 
