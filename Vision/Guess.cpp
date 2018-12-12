@@ -49,7 +49,9 @@ void Guess::Print(int label, int result, cv::Mat image)
 {
 	cv::Mat resized;
 	resize(image, resized, cv::Size(200, 200));
-	cvtColor(resized, resized, CV_GRAY2BGR);
+
+	if(image.channels() == 1)
+		cvtColor(resized, resized, CV_GRAY2BGR);
 
 	// tried to make them static
 	cv::Scalar Red = cv::Scalar(0, 0, 1);
