@@ -363,6 +363,8 @@ std::tuple<std::vector<Eigen::MatrixXf>, std::vector<Eigen::VectorXf>> Network::
 		conv1HS.push_back(h);
 	}
 
+	std::cout << "Conv layer 1" << conv1HS.back().format(CleanFmt) << std::endl;
+
 	// max pool with a stride of 2
 	vector<Eigen::MatrixXf> maxPoolHS;
 	for (int i = 0; i < 10; i++)
@@ -383,13 +385,13 @@ std::tuple<std::vector<Eigen::MatrixXf>, std::vector<Eigen::VectorXf>> Network::
 		maxPoolHS.push_back(poolH);
 	}
 
-	std::cout << "Second conv on " << maxPoolHS[0].format(CleanFmt) << std::endl;
+	std::cout << "MaxPool layer 1" << maxPoolHS.back().format(CleanFmt) << std::endl;
 
 	// conv second layer
 	vector<Eigen::MatrixXf> conv2HS;
 	for (int i = 0; i < 10; i++)
 	{
-		std::cout << "Conv" << Conv2[i].format(CleanFmt) << std::endl;
+		//std::cout << "Conv" << Conv2[i].format(CleanFmt) << std::endl;
 
 		Eigen::MatrixXf h(8, 8);
 		for (int y = 0; y < 8; y++)
@@ -398,15 +400,17 @@ std::tuple<std::vector<Eigen::MatrixXf>, std::vector<Eigen::VectorXf>> Network::
 			{
 				// convolution with a stride of 1
 				Eigen::MatrixXf block = maxPoolHS[i].block<5, 5>(y, x).array();
-				std::cout << block.format(CleanFmt) << std::endl;
+				//std::cout << block.format(CleanFmt) << std::endl;
 
 				h(y, x) = (block.array() * Conv2[i].array()).sum();
 			}
 		}
 
-		std::cout << h.format(CleanFmt) << std::endl;
+		//std::cout << h.format(CleanFmt) << std::endl;
 		conv2HS.push_back(h);
 	}
+
+	std::cout << "Conv layer 2" << conv2HS.back().format(CleanFmt) << std::endl;
 
 	// max pool with a stride of 2
 	vector<Eigen::MatrixXf> maxPoolHS2;
@@ -418,15 +422,38 @@ std::tuple<std::vector<Eigen::MatrixXf>, std::vector<Eigen::VectorXf>> Network::
 			for (int x = 0; x < 4; x++)
 			{
 				Eigen::MatrixXf block = conv2HS[i].block<2, 2>(y * 2, x * 2).array();
-				std::cout << block.format(CleanFmt) << std::endl;
+				//std::cout << block.format(CleanFmt) << std::endl;
 
 				poolH(y, x) = block.maxCoeff();
 			}
 		}
 
-		std::cout << poolH.format(CleanFmt) << std::endl;
+		//std::cout << poolH.format(CleanFmt) << std::endl;
 		maxPoolHS2.push_back(poolH);
 	}
+
+	std::cout << "MaxPool layer 2" << maxPoolHS2.back().format(CleanFmt) << std::endl;
+
+	// flatten layer
+	Eigen::MatrixXf mat2vec(10, 4 * 4);
+	Eigen::VectorXf flatten(10 * 4 * 4);
+
+	for (int i = 0; i < 10; i++)
+	{
+		Eigen::Map<Eigen::RowVectorXf> vec(maxPoolHS2[i].data(), maxPoolHS2[i].size());
+		std::cout << vec.format(CleanFmt) << std::endl;
+		mat2vec.row(i) = vec;
+	}
+
+	std::cout << mat2vec.format(CleanFmt) << std::endl;
+
+	Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> preFlatten(mat2vec);
+	flatten = Eigen::Map<Eigen::RowVectorXf>(preFlatten.data(), preFlatten.size());
+
+	std::cout << flatten.format(CleanFmt) << std::endl;
+
+	// normal forward pass
+
 
 	return std::tuple<std::vector<Eigen::MatrixXf>, std::vector<Eigen::VectorXf>>();
 }
