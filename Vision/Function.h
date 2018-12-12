@@ -33,7 +33,6 @@ private:
 	//Relu prime
 	static Eigen::VectorXf LeakyReluPrime(Eigen::VectorXf src);
 
-
 	//SoftMax
 	static Eigen::VectorXf SoftMax(Eigen::VectorXf src);
 

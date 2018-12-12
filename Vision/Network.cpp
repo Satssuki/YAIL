@@ -338,7 +338,7 @@ std::tuple<std::vector<Eigen::MatrixXf>, std::vector<Eigen::VectorXf>> Network::
 
 std::tuple<std::vector<Eigen::MatrixXf>, std::vector<Eigen::VectorXf>> Network::BackPropagation(Eigen::MatrixXf image, int label)
 {
-	std::cout << "Image" << image.format(CleanFmt) << std::endl;
+	//std::cout << "Image" << image.format(CleanFmt) << std::endl;
 
 	// conv first layer
 	vector<Eigen::MatrixXf> conv1HS;
@@ -363,7 +363,7 @@ std::tuple<std::vector<Eigen::MatrixXf>, std::vector<Eigen::VectorXf>> Network::
 		conv1HS.push_back(h);
 	}
 
-	std::cout << "Conv layer 1" << conv1HS.back().format(CleanFmt) << std::endl;
+	//std::cout << "Conv layer 1" << conv1HS.back().format(CleanFmt) << std::endl;
 
 	// max pool with a stride of 2
 	vector<Eigen::MatrixXf> maxPoolHS;
@@ -375,17 +375,17 @@ std::tuple<std::vector<Eigen::MatrixXf>, std::vector<Eigen::VectorXf>> Network::
 			for (int x = 0; x < 12; x++)
 			{
 				Eigen::MatrixXf block = conv1HS[i].block<2, 2>(y * 2, x * 2).array();
-				std::cout << block.format(CleanFmt) << std::endl;
+				//std::cout << block.format(CleanFmt) << std::endl;
 
 				poolH(y, x) = block.maxCoeff();
 			}
 		}
 
-		std::cout << poolH.format(CleanFmt) << std::endl;
+		//std::cout << poolH.format(CleanFmt) << std::endl;
 		maxPoolHS.push_back(poolH);
 	}
 
-	std::cout << "MaxPool layer 1" << maxPoolHS.back().format(CleanFmt) << std::endl;
+	//std::cout << "MaxPool layer 1" << maxPoolHS.back().format(CleanFmt) << std::endl;
 
 	// conv second layer
 	vector<Eigen::MatrixXf> conv2HS;
@@ -410,7 +410,7 @@ std::tuple<std::vector<Eigen::MatrixXf>, std::vector<Eigen::VectorXf>> Network::
 		conv2HS.push_back(h);
 	}
 
-	std::cout << "Conv layer 2" << conv2HS.back().format(CleanFmt) << std::endl;
+	//std::cout << "Conv layer 2" << conv2HS.back().format(CleanFmt) << std::endl;
 
 	// max pool with a stride of 2
 	vector<Eigen::MatrixXf> maxPoolHS2;
@@ -432,7 +432,7 @@ std::tuple<std::vector<Eigen::MatrixXf>, std::vector<Eigen::VectorXf>> Network::
 		maxPoolHS2.push_back(poolH);
 	}
 
-	std::cout << "MaxPool layer 2" << maxPoolHS2.back().format(CleanFmt) << std::endl;
+	//std::cout << "MaxPool layer 2" << maxPoolHS2.back().format(CleanFmt) << std::endl;
 
 	// flatten layer
 	Eigen::MatrixXf mat2vec(10, 4 * 4);
@@ -441,21 +441,50 @@ std::tuple<std::vector<Eigen::MatrixXf>, std::vector<Eigen::VectorXf>> Network::
 	for (int i = 0; i < 10; i++)
 	{
 		Eigen::Map<Eigen::RowVectorXf> vec(maxPoolHS2[i].data(), maxPoolHS2[i].size());
-		std::cout << vec.format(CleanFmt) << std::endl;
 		mat2vec.row(i) = vec;
 	}
-
-	std::cout << mat2vec.format(CleanFmt) << std::endl;
 
 	Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> preFlatten(mat2vec);
 	flatten = Eigen::Map<Eigen::RowVectorXf>(preFlatten.data(), preFlatten.size());
 
-	std::cout << flatten.format(CleanFmt) << std::endl;
-
 	// normal forward pass
+	std::vector< Eigen::VectorXf> activations;
+	activations.push_back(flatten);
 
+	std::vector< Eigen::VectorXf> zs;
+	zs.reserve(Layers.size() - 1);
 
-	return std::tuple<std::vector<Eigen::MatrixXf>, std::vector<Eigen::VectorXf>>();
+	Eigen::VectorXf a = flatten;
+	for (int i = 0; i < Layers.size() - 1; i++)
+	{
+		Eigen::VectorXf z = Weights[i] * a + Biases[i];
+		a = Function::ActivationFunction(Layers[i + 1]->_Activation, z);
+
+		zs.push_back(z);
+		activations.push_back(a);
+	}
+
+	// backpropagation
+	std::vector< Eigen::MatrixXf> deltaWeights;
+	std::vector< Eigen::VectorXf> deltaBiases;
+
+	Eigen::VectorXf delta = Function::DeltaLastLayer(_Loss, VectorizeLabel(label), activations.back(), zs.back());
+
+	deltaBiases.push_back(delta);
+	deltaWeights.push_back(delta * activations[activations.size() - 2].transpose());
+
+	for (int i = 2; i < Layers.size(); i++)
+	{
+		Eigen::VectorXf fp = Function::ActivationFunctionPrime(Layers[Layers.size() - i]->_Activation, zs[zs.size() - i]);
+		delta = (Weights[Weights.size() - i + 1].transpose() * delta).array() * fp.array();
+
+		deltaBiases.insert(deltaBiases.begin(), delta);
+		deltaWeights.insert(deltaWeights.begin(), delta * activations[activations.size() - i - 1].transpose());
+	}
+
+	// backprop on maxpool and conv layer
+
+	return { deltaWeights, deltaBiases };
 }
 
 Eigen::VectorXf Network::Forward(Eigen::VectorXf input)
