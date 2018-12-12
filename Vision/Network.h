@@ -8,6 +8,8 @@
 
 #include "Dense.h"
 #include "Input.h"
+#include "MaxPool2D.h"
+#include "Conv2D.h"
 
 class Network
 {
@@ -31,10 +33,18 @@ private:
 	std::tuple <int, float> Evaluate();
 	void UpdateBatch(std::tuple < std::vector<cv::Mat>, std::vector<int>> batch);
 	std::tuple < std::vector < Eigen::MatrixXf>, std::vector<Eigen::VectorXf> > BackPropagation(Eigen::VectorXf image, int label);
+	std::tuple < std::vector < Eigen::MatrixXf>, std::vector<Eigen::VectorXf> > BackPropagation(Eigen::MatrixXf image, int label);
+
 	Eigen::VectorXf Forward(Eigen::VectorXf input);
 	Eigen::VectorXf VectorizeLabel(int label);
 	Eigen::VectorXf VectorizeImage(cv::Mat imageCV);
+	Eigen::MatrixXf MatrixImage(cv::Mat imageCV);
 
+	/******* Test *******/
+	std::vector<Eigen::MatrixXf> Conv1;
+	std::vector<Eigen::MatrixXf> Conv2;
+	/**************/
+	
 	std::vector<Layer*> Layers;
 	std::vector<Eigen::VectorXf> Biases;
 	std::vector<Eigen::MatrixXf> Weights;

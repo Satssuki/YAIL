@@ -81,6 +81,12 @@
     <ClCompile Include="DataExtractor.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
+    <ClCompile Include="MaxPool2D.cpp">
+      <Filter>Fichiers sources\Network\Layers</Filter>
+    </ClCompile>
+    <ClCompile Include="Conv2D.cpp">
+      <Filter>Fichiers sources\Network\Layers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AllIncludes.h">
@@ -130,6 +136,12 @@
     </ClInclude>
     <ClInclude Include="DataExtractor.h">
       <Filter>Fichiers d%27en-tête\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="MaxPool2D.h">
+      <Filter>Fichiers d%27en-tête\Network\Layers</Filter>
+    </ClInclude>
+    <ClInclude Include="Conv2D.h">
+      <Filter>Fichiers d%27en-tête\Network\Layers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -179,15 +179,27 @@ void Network::Summary()
 
 void Network::NormalInitialization()
 {
+
 	std::cout << "Initialize weights and biases" << std::endl;
 
 	std::default_random_engine generator;
 	std::normal_distribution<float> distribution(0.0, 1.0);
 	
+	/********* Test *********/
+	for (int i = 0; i < 10; i++) {
+		auto normalWeight = [&](float) {return distribution(generator) / sqrt(5 * 5); };
+		Conv1.push_back(Eigen::MatrixXf::NullaryExpr(5, 5, normalWeight));
+	}
+	for (int i = 0; i < 10; i++) {
+		auto normalWeight = [&](float) {return distribution(generator) / sqrt(5 * 5); };
+		Conv2.push_back(Eigen::MatrixXf::NullaryExpr(5, 5, normalWeight));
+	}
+	/************************/
+
 	auto normalBias = [&](float) {return distribution(generator); };
 
-	Biases.reserve(Layers.size() - 1);
-	Weights.reserve(Layers.size() - 1);
+	//Biases.reserve(Layers.size() - 1);
+	//Weights.reserve(Layers.size() - 1);
 
 	for(int i = 1; i < Layers.size(); i++) 
 	{
@@ -263,7 +275,8 @@ void Network::UpdateBatch(std::tuple<std::vector<cv::Mat>, std::vector<int>> bat
 		cv::Mat imageCV = std::get<0>(batch)[i];
 		
 		int label = std::get<1>(batch)[i];
-		auto errorWeightsBiases = BackPropagation(VectorizeImage(imageCV), label);
+		//auto errorWeightsBiases = BackPropagation(VectorizeImage(imageCV), label);
+		auto errorWeightsBiases = BackPropagation(MatrixImage(imageCV), label);
 
 		for (int iL = 0; iL < Layers.size() - 1; iL++)
 		{
@@ -323,6 +336,101 @@ std::tuple<std::vector<Eigen::MatrixXf>, std::vector<Eigen::VectorXf>> Network::
 	return {deltaWeights, deltaBiases};
 }
 
+std::tuple<std::vector<Eigen::MatrixXf>, std::vector<Eigen::VectorXf>> Network::BackPropagation(Eigen::MatrixXf image, int label)
+{
+	std::cout << "Image" << image.format(CleanFmt) << std::endl;
+
+	// conv first layer
+	vector<Eigen::MatrixXf> conv1HS;
+	for (int i = 0; i < 10; i++)
+	{
+		//std::cout << "Conv" << Conv1[i].format(CleanFmt) << std::endl;
+
+		Eigen::MatrixXf h(24, 24);
+		for (int y = 0; y < 24; y++) 
+		{
+			for (int x = 0; x < 24; x++)
+			{
+					// convolution with a stride of 1
+				Eigen::MatrixXf block = image.block<5, 5>(y, x).array();
+				//std::cout << block.format(CleanFmt) << std::endl;
+
+				h(y,x) = (block.array() * Conv1[i].array()).sum();
+			}
+		}
+
+		//std::cout << h.format(CleanFmt) << std::endl;
+		conv1HS.push_back(h);
+	}
+
+	// max pool with a stride of 2
+	vector<Eigen::MatrixXf> maxPoolHS;
+	for (int i = 0; i < 10; i++)
+	{
+		Eigen::MatrixXf poolH(12, 12);
+		for (int y = 0; y < 12; y++)
+		{
+			for (int x = 0; x < 12; x++)
+			{
+				Eigen::MatrixXf block = conv1HS[i].block<2, 2>(y * 2, x * 2).array();
+				std::cout << block.format(CleanFmt) << std::endl;
+
+				poolH(y, x) = block.maxCoeff();
+			}
+		}
+
+		std::cout << poolH.format(CleanFmt) << std::endl;
+		maxPoolHS.push_back(poolH);
+	}
+
+	std::cout << "Second conv on " << maxPoolHS[0].format(CleanFmt) << std::endl;
+
+	// conv second layer
+	vector<Eigen::MatrixXf> conv2HS;
+	for (int i = 0; i < 10; i++)
+	{
+		std::cout << "Conv" << Conv2[i].format(CleanFmt) << std::endl;
+
+		Eigen::MatrixXf h(8, 8);
+		for (int y = 0; y < 8; y++)
+		{
+			for (int x = 0; x < 8; x++)
+			{
+				// convolution with a stride of 1
+				Eigen::MatrixXf block = maxPoolHS[i].block<5, 5>(y, x).array();
+				std::cout << block.format(CleanFmt) << std::endl;
+
+				h(y, x) = (block.array() * Conv2[i].array()).sum();
+			}
+		}
+
+		std::cout << h.format(CleanFmt) << std::endl;
+		conv2HS.push_back(h);
+	}
+
+	// max pool with a stride of 2
+	vector<Eigen::MatrixXf> maxPoolHS2;
+	for (int i = 0; i < 10; i++)
+	{
+		Eigen::MatrixXf poolH(4, 4);
+		for (int y = 0; y < 4; y++)
+		{
+			for (int x = 0; x < 4; x++)
+			{
+				Eigen::MatrixXf block = conv2HS[i].block<2, 2>(y * 2, x * 2).array();
+				std::cout << block.format(CleanFmt) << std::endl;
+
+				poolH(y, x) = block.maxCoeff();
+			}
+		}
+
+		std::cout << poolH.format(CleanFmt) << std::endl;
+		maxPoolHS2.push_back(poolH);
+	}
+
+	return std::tuple<std::vector<Eigen::MatrixXf>, std::vector<Eigen::VectorXf>>();
+}
+
 Eigen::VectorXf Network::Forward(Eigen::VectorXf input)
 {	
 	Eigen::VectorXf a = input;
@@ -349,4 +457,11 @@ Eigen::VectorXf Network::VectorizeImage(cv::Mat imageCV)
 	Eigen::Map<Eigen::RowVectorXf> image(mat.data(), mat.size());
 
 	return image;
+}
+
+Eigen::MatrixXf Network::MatrixImage(cv::Mat imageCV)
+{
+	Eigen::Map<Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> mat(reinterpret_cast<float*>(imageCV.data), imageCV.rows, imageCV.cols * imageCV.channels());
+
+	return mat;
 }

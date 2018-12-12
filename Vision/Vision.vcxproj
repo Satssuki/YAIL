@@ -157,6 +157,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Conv2D.cpp" />
     <ClCompile Include="cv2eigen.cpp" />
     <ClCompile Include="DataAugmentation.cpp" />
     <ClCompile Include="DataExtractor.cpp" />
@@ -167,6 +168,7 @@
     <ClCompile Include="Guess.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Layer.cpp" />
+    <ClCompile Include="MaxPool2D.cpp" />
     <ClCompile Include="MNIST.cpp" />
     <ClCompile Include="Network.cpp" />
     <ClCompile Include="Vision.cpp" />
@@ -174,6 +176,7 @@
   <ItemGroup>
     <ClInclude Include="Activation.h" />
     <ClInclude Include="AllIncludes.h" />
+    <ClInclude Include="Conv2D.h" />
     <ClInclude Include="cv2eigen.h" />
     <ClInclude Include="DataAugmentation.h" />
     <ClInclude Include="DataExtractor.h" />
@@ -185,6 +188,7 @@
     <ClInclude Include="Input.h" />
     <ClInclude Include="Layer.h" />
     <ClInclude Include="Loss.h" />
+    <ClInclude Include="MaxPool2D.h" />
     <ClInclude Include="MNIST.h" />
     <ClInclude Include="Network.h" />
     <ClInclude Include="Optimizer.h" />
