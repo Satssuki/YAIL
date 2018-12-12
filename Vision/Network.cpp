@@ -221,9 +221,12 @@ std::tuple <int, float> Network::Evaluate()
 	{
 		// Todo use already converted image
 		cv::Mat imageCV = std::get<0>(TestData)[i];
-		Eigen::VectorXf image = VectorizeImage(imageCV);
+		
+		//Eigen::VectorXf image = VectorizeImage(imageCV);
+		//Eigen::VectorXf L = Forward(image);
+		Eigen::MatrixXf mat = MatrixImage(imageCV);
+		Eigen::VectorXf L = ForwardCNN(mat);
 
-		Eigen::VectorXf L = Forward(image);
 		float max = L(0);
 		int maxIndex = 0;
 		for (int v = 1; v < L.rows(); v++)
@@ -482,7 +485,9 @@ std::tuple<std::vector<Eigen::MatrixXf>, std::vector<Eigen::VectorXf>> Network::
 		deltaWeights.insert(deltaWeights.begin(), delta * activations[activations.size() - i - 1].transpose());
 	}
 
+	/*** todo ***/
 	// backprop on maxpool and conv layer
+	
 
 	return { deltaWeights, deltaBiases };
 }
@@ -496,6 +501,126 @@ Eigen::VectorXf Network::Forward(Eigen::VectorXf input)
 		a = Function::ActivationFunction(Layers[iL + 1]->_Activation, z);
 	}
 	
+	return a;
+}
+
+Eigen::VectorXf Network::ForwardCNN(Eigen::MatrixXf input)
+{
+	vector<Eigen::MatrixXf> conv1HS;
+	for (int i = 0; i < 10; i++)
+	{
+		//std::cout << "Conv" << Conv1[i].format(CleanFmt) << std::endl;
+
+		Eigen::MatrixXf h(24, 24);
+		for (int y = 0; y < 24; y++)
+		{
+			for (int x = 0; x < 24; x++)
+			{
+				// convolution with a stride of 1
+				Eigen::MatrixXf block = input.block<5, 5>(y, x).array();
+				//std::cout << block.format(CleanFmt) << std::endl;
+
+				h(y, x) = (block.array() * Conv1[i].array()).sum();
+			}
+		}
+
+		//std::cout << h.format(CleanFmt) << std::endl;
+		conv1HS.push_back(h);
+	}
+
+	//std::cout << "Conv layer 1" << conv1HS.back().format(CleanFmt) << std::endl;
+
+	// max pool with a stride of 2
+	vector<Eigen::MatrixXf> maxPoolHS;
+	for (int i = 0; i < 10; i++)
+	{
+		Eigen::MatrixXf poolH(12, 12);
+		for (int y = 0; y < 12; y++)
+		{
+			for (int x = 0; x < 12; x++)
+			{
+				Eigen::MatrixXf block = conv1HS[i].block<2, 2>(y * 2, x * 2).array();
+				//std::cout << block.format(CleanFmt) << std::endl;
+
+				poolH(y, x) = block.maxCoeff();
+			}
+		}
+
+		//std::cout << poolH.format(CleanFmt) << std::endl;
+		maxPoolHS.push_back(poolH);
+	}
+
+	//std::cout << "MaxPool layer 1" << maxPoolHS.back().format(CleanFmt) << std::endl;
+
+	// conv second layer
+	vector<Eigen::MatrixXf> conv2HS;
+	for (int i = 0; i < 10; i++)
+	{
+		//std::cout << "Conv" << Conv2[i].format(CleanFmt) << std::endl;
+
+		Eigen::MatrixXf h(8, 8);
+		for (int y = 0; y < 8; y++)
+		{
+			for (int x = 0; x < 8; x++)
+			{
+				// convolution with a stride of 1
+				Eigen::MatrixXf block = maxPoolHS[i].block<5, 5>(y, x).array();
+				//std::cout << block.format(CleanFmt) << std::endl;
+
+				h(y, x) = (block.array() * Conv2[i].array()).sum();
+			}
+		}
+
+		//std::cout << h.format(CleanFmt) << std::endl;
+		conv2HS.push_back(h);
+	}
+
+	//std::cout << "Conv layer 2" << conv2HS.back().format(CleanFmt) << std::endl;
+
+	// max pool with a stride of 2
+	vector<Eigen::MatrixXf> maxPoolHS2;
+	for (int i = 0; i < 10; i++)
+	{
+		Eigen::MatrixXf poolH(4, 4);
+		for (int y = 0; y < 4; y++)
+		{
+			for (int x = 0; x < 4; x++)
+			{
+				Eigen::MatrixXf block = conv2HS[i].block<2, 2>(y * 2, x * 2).array();
+				//std::cout << block.format(CleanFmt) << std::endl;
+
+				poolH(y, x) = block.maxCoeff();
+			}
+		}
+
+		//std::cout << poolH.format(CleanFmt) << std::endl;
+		maxPoolHS2.push_back(poolH);
+	}
+
+	//std::cout << "MaxPool layer 2" << maxPoolHS2.back().format(CleanFmt) << std::endl;
+
+	// flatten layer
+	Eigen::MatrixXf mat2vec(10, 4 * 4);
+	Eigen::VectorXf flatten(10 * 4 * 4);
+
+	for (int i = 0; i < 10; i++)
+	{
+		Eigen::Map<Eigen::RowVectorXf> vec(maxPoolHS2[i].data(), maxPoolHS2[i].size());
+		mat2vec.row(i) = vec;
+	}
+
+	Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> preFlatten(mat2vec);
+	flatten = Eigen::Map<Eigen::RowVectorXf>(preFlatten.data(), preFlatten.size());
+
+	// normal forward pass
+
+	Eigen::VectorXf a = flatten;
+	for (int i = 0; i < Layers.size() - 1; i++)
+	{
+		Eigen::VectorXf z = Weights[i] * a + Biases[i];
+		a = Function::ActivationFunction(Layers[i + 1]->_Activation, z);
+	}
+
 	return a;
 }
 

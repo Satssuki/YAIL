@@ -36,6 +36,8 @@ private:
 	std::tuple < std::vector < Eigen::MatrixXf>, std::vector<Eigen::VectorXf> > BackPropagation(Eigen::MatrixXf image, int label);
 
 	Eigen::VectorXf Forward(Eigen::VectorXf input);
+	Eigen::VectorXf ForwardCNN(Eigen::MatrixXf input);
+
 	Eigen::VectorXf VectorizeLabel(int label);
 	Eigen::VectorXf VectorizeImage(cv::Mat imageCV);
 	Eigen::MatrixXf MatrixImage(cv::Mat imageCV);
