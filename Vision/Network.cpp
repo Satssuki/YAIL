@@ -367,6 +367,7 @@ std::tuple<std::vector<Eigen::MatrixXf>, std::vector<Eigen::VectorXf>> Network::
 	}
 
 	//std::cout << "Conv layer 1" << conv1HS.back().format(CleanFmt) << std::endl;
+	// Todo apply activation function
 
 	// max pool with a stride of 2
 	vector<Eigen::MatrixXf> maxPoolHS;
@@ -414,6 +415,7 @@ std::tuple<std::vector<Eigen::MatrixXf>, std::vector<Eigen::VectorXf>> Network::
 	}
 
 	//std::cout << "Conv layer 2" << conv2HS.back().format(CleanFmt) << std::endl;
+	// Todo apply activation function
 
 	// max pool with a stride of 2
 	vector<Eigen::MatrixXf> maxPoolHS2;
@@ -488,7 +490,11 @@ std::tuple<std::vector<Eigen::MatrixXf>, std::vector<Eigen::VectorXf>> Network::
 	/*** todo ***/
 	// backprop on maxpool and conv layer
 	
+	// partial derivatives of input neurons, is the same as the partial derivatives of the bias?
+	Eigen::VectorXf fp = Function::ActivationFunctionPrime(sigmoid, flatten); // values of the flatten are already activated
+	delta = (Weights[0].transpose() * delta).array() * fp.array();
 
+	// convert vector back to multiple matrix
 	return { deltaWeights, deltaBiases };
 }
 
