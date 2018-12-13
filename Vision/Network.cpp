@@ -339,6 +339,11 @@ std::tuple<std::vector<Eigen::MatrixXf>, std::vector<Eigen::VectorXf>> Network::
 	return {deltaWeights, deltaBiases};
 }
 
+float Relu(float x)
+{
+	return max(0.0f, x);
+}
+
 std::tuple<std::vector<Eigen::MatrixXf>, std::vector<Eigen::VectorXf>> Network::BackPropagation(Eigen::MatrixXf image, int label)
 {
 	//std::cout << "Image" << image.format(CleanFmt) << std::endl;
@@ -362,14 +367,17 @@ std::tuple<std::vector<Eigen::MatrixXf>, std::vector<Eigen::VectorXf>> Network::
 			}
 		}
 
+		// Todo apply relu activation function
+		h = h.unaryExpr(&Relu);
+
 		//std::cout << h.format(CleanFmt) << std::endl;
+
 		conv1HS.push_back(h);
 	}
 
 	//std::cout << "Conv layer 1" << conv1HS.back().format(CleanFmt) << std::endl;
-	// Todo apply activation function
 
-	// max pool with a stride of 2
+	// mean pool with a stride of 2
 	vector<Eigen::MatrixXf> maxPoolHS;
 	for (int i = 0; i < 10; i++)
 	{
@@ -381,7 +389,8 @@ std::tuple<std::vector<Eigen::MatrixXf>, std::vector<Eigen::VectorXf>> Network::
 				Eigen::MatrixXf block = conv1HS[i].block<2, 2>(y * 2, x * 2).array();
 				//std::cout << block.format(CleanFmt) << std::endl;
 
-				poolH(y, x) = block.maxCoeff();
+				//poolH(y, x) = block.maxCoeff();
+				poolH(y, x) = block.mean();
 			}
 		}
 
@@ -410,14 +419,16 @@ std::tuple<std::vector<Eigen::MatrixXf>, std::vector<Eigen::VectorXf>> Network::
 			}
 		}
 
+		// Todo apply activation function
+		h = h.unaryExpr(&Relu);
+
 		//std::cout << h.format(CleanFmt) << std::endl;
 		conv2HS.push_back(h);
 	}
 
 	//std::cout << "Conv layer 2" << conv2HS.back().format(CleanFmt) << std::endl;
-	// Todo apply activation function
 
-	// max pool with a stride of 2
+	// mean pool with a stride of 2
 	vector<Eigen::MatrixXf> maxPoolHS2;
 	for (int i = 0; i < 10; i++)
 	{
@@ -429,7 +440,8 @@ std::tuple<std::vector<Eigen::MatrixXf>, std::vector<Eigen::VectorXf>> Network::
 				Eigen::MatrixXf block = conv2HS[i].block<2, 2>(y * 2, x * 2).array();
 				//std::cout << block.format(CleanFmt) << std::endl;
 
-				poolH(y, x) = block.maxCoeff();
+				//poolH(y, x) = block.maxCoeff();
+				poolH(y, x) = block.mean();
 			}
 		}
 
@@ -493,6 +505,17 @@ std::tuple<std::vector<Eigen::MatrixXf>, std::vector<Eigen::VectorXf>> Network::
 	// partial derivatives of input neurons, is the same as the partial derivatives of the bias?
 	Eigen::VectorXf fp = Function::ActivationFunctionPrime(sigmoid, flatten); // values of the flatten are already activated
 	delta = (Weights[0].transpose() * delta).array() * fp.array();
+
+	// convert vec to multiple array
+	for (int i = 0; i < 10; i++)
+	{
+		Eigen::VectorXf subVec = delta.array().segment(i * 16, 16); 
+		Eigen::Map<Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> subMat(reinterpret_cast<float*>(subVec.data()), 4, 4);
+	}
+
+	// expend these array
+
+
 
 	// convert vector back to multiple matrix
 	return { deltaWeights, deltaBiases };
