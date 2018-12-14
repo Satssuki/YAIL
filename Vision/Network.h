@@ -45,6 +45,9 @@ private:
 	/******* Test *******/
 	std::vector<Eigen::MatrixXf> Conv1;
 	std::vector<Eigen::MatrixXf> Conv2;
+
+	std::vector<Eigen::MatrixXf> Conv2dKerneld;
+	std::vector<Eigen::MatrixXf> Conv1dKerneld;
 	/**************/
 	
 	std::vector<Layer*> Layers;

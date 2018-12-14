@@ -292,7 +292,15 @@ void Network::UpdateBatch(std::tuple<std::vector<cv::Mat>, std::vector<int>> bat
 	{
 		Weights[i].array() -= (LearningRate / currentBatchSize) * sumWeightsError[i].array();
 		Biases[i].array() -= (LearningRate / currentBatchSize) * sumBiasesError[i].array();
+
+		for (int n = 0; n < 10; n++)
+		{
+			Conv1[i].array() -= (LearningRate / currentBatchSize) * Conv1dKerneld[i].array();
+			Conv2[i].array() -= (LearningRate / currentBatchSize) * Conv2dKerneld[i].array();
+		}
 	}
+	Conv1dKerneld.shrink_to_fit();
+	Conv2dKerneld.shrink_to_fit();
 }
 
 std::tuple<std::vector<Eigen::MatrixXf>, std::vector<Eigen::VectorXf>> Network::BackPropagation(Eigen::VectorXf image, int label)
@@ -506,16 +514,78 @@ std::tuple<std::vector<Eigen::MatrixXf>, std::vector<Eigen::VectorXf>> Network::
 	Eigen::VectorXf fp = Function::ActivationFunctionPrime(sigmoid, flatten); // values of the flatten are already activated
 	delta = (Weights[0].transpose() * delta).array() * fp.array();
 
+	std::vector<Eigen::MatrixXf> conv2DHZ;
 	// convert vec to multiple array
 	for (int i = 0; i < 10; i++)
 	{
 		Eigen::VectorXf subVec = delta.array().segment(i * 16, 16); 
 		Eigen::Map<Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> subMat(reinterpret_cast<float*>(subVec.data()), 4, 4);
+
+		// divide error for mean pooling 
+		Eigen::MatrixXf mat(8, 8);
+
+		subMat = subMat.array() / 4;
+
+		for (int y = 0; y < 4; y++)
+		{
+			for (int x = 0; x < 4; x++)
+			{
+				mat.block<2, 2>(y * 2, x * 2) = Eigen::Matrix2f::Constant(subMat(y, x));
+			}
+		}
+		// expend
+		conv2DHZ.push_back(mat);
 	}
 
-	// expend these array
+	std::vector<Eigen::MatrixXf> max1dhz;
+	for (int i = 0; i < 10; i++)
+	{
+		Eigen::MatrixXf mat(12, 12);
+		Eigen::MatrixXf kernel(5, 5);
+		for (int y = 0; y < 8; y++)
+		{
+			for (int x = 0; x < 8; x++)
+			{
+				mat.block<5, 5>(y, x).array() += Conv2[i].array() * conv2DHZ[i](y, x);
+				kernel.array() += mat.block<5, 5>(y, x).array() * conv2DHZ[i](y, x);
+			}
+		}
+		max1dhz.push_back(mat);
+		Conv2dKerneld.push_back(kernel);
+	}	
 
+	std::vector<Eigen::MatrixXf> conv1DHZ;
+	for (int i = 0; i < 10; i++)
+	{
+		Eigen::MatrixXf subMat(12, 12);
+		subMat.array() = max1dhz[i].array() / 4;
 
+		Eigen::MatrixXf mat(24, 24);
+
+		for (int y = 0; y < 12; y++)
+		{
+			for (int x = 0; x < 12; x++)
+			{
+				mat.block<2, 2>(y * 2, x * 2) = Eigen::Matrix2f::Constant(subMat(y, x));
+			}
+		}
+		conv1DHZ.push_back(mat);
+	}
+
+	for (int i = 0; i < 10; i++)
+	{
+		Eigen::MatrixXf mat(28, 28);
+		Eigen::MatrixXf kernel(5, 5);
+		for (int y = 0; y < 24; y++)
+		{
+			for (int x = 0; x < 24; x++)
+			{
+				mat.block<5, 5>(y, x).array() += Conv1[i].array() * conv1DHZ[i](y, x);
+				kernel.array() += mat.block<5, 5>(y, x).array() * conv1DHZ[i](y, x);
+			}			
+		}
+		Conv1dKerneld.push_back(kernel);
+	}	
 
 	// convert vector back to multiple matrix
 	return { deltaWeights, deltaBiases };
